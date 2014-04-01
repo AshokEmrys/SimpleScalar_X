@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="94">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>bitmap.h</itemPath>
+      <itemPath>bpred.h</itemPath>
+      <itemPath>cache.h</itemPath>
+      <itemPath>config.h</itemPath>
+      <itemPath>dlite.h</itemPath>
+      <itemPath>eio.h</itemPath>
+      <itemPath>endian.h</itemPath>
+      <itemPath>eval.h</itemPath>
+      <itemPath>eventq.h</itemPath>
+      <itemPath>host.h</itemPath>
+      <itemPath>loader.h</itemPath>
+      <itemPath>machine.h</itemPath>
+      <itemPath>memory.h</itemPath>
+      <itemPath>misc.h</itemPath>
+      <itemPath>options.h</itemPath>
+      <itemPath>ptrace.h</itemPath>
+      <itemPath>range.h</itemPath>
+      <itemPath>regs.h</itemPath>
+      <itemPath>resource.h</itemPath>
+      <itemPath>sim.h</itemPath>
+      <itemPath>stats.h</itemPath>
+      <itemPath>symbol.h</itemPath>
+      <itemPath>syscall.h</itemPath>
+      <itemPath>version.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>bpred.c</itemPath>
+      <itemPath>cache.c</itemPath>
+      <itemPath>dlite.c</itemPath>
+      <itemPath>eio.c</itemPath>
+      <itemPath>endian.c</itemPath>
+      <itemPath>eval.c</itemPath>
+      <itemPath>eventq.c</itemPath>
+      <itemPath>loader.c</itemPath>
+      <itemPath>machine.c</itemPath>
+      <itemPath>main.c</itemPath>
+      <itemPath>memory.c</itemPath>
+      <itemPath>misc.c</itemPath>
+      <itemPath>options.c</itemPath>
+      <itemPath>ptrace.c</itemPath>
+      <itemPath>range.c</itemPath>
+      <itemPath>regs.c</itemPath>
+      <itemPath>resource.c</itemPath>
+      <itemPath>sim-bpred.c</itemPath>
+      <itemPath>sim-cache.c</itemPath>
+      <itemPath>sim-eio.c</itemPath>
+      <itemPath>sim-fast.c</itemPath>
+      <itemPath>sim-outorder.c</itemPath>
+      <itemPath>sim-profile.c</itemPath>
+      <itemPath>sim-safe.c</itemPath>
+      <itemPath>stats.c</itemPath>
+      <itemPath>symbol.c</itemPath>
+      <itemPath>syscall.c</itemPath>
+      <itemPath>sysprobe.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+      </compileType>
+      <item path="bitmap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="bpred.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="bpred.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cache.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dlite.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="dlite.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eio.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="eio.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="endian.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="endian.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eval.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="eval.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eventq.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="eventq.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="host.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="loader.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="loader.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="machine.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="machine.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="memory.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="memory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="options.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="options.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ptrace.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="ptrace.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="range.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="range.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="regs.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="regs.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resource.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="resource.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sim-bpred.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-cache.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-eio.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-fast.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-profile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-safe.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="stats.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stats.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="symbol.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="symbol.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="syscall.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="syscall.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sysprobe.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="version.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="bitmap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="bpred.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="bpred.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cache.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dlite.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="dlite.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eio.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="eio.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="endian.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="endian.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eval.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="eval.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="eventq.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="eventq.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="host.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="loader.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="loader.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="machine.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="machine.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="memory.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="memory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="options.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="options.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ptrace.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="ptrace.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="range.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="range.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="regs.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="regs.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="resource.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="resource.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sim-bpred.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-cache.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-eio.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-fast.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-profile.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-safe.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="stats.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stats.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="symbol.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="symbol.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="syscall.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="syscall.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sysprobe.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="version.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
