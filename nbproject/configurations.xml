@@ -30,6 +30,7 @@
       <itemPath>range.h</itemPath>
       <itemPath>regs.h</itemPath>
       <itemPath>resource.h</itemPath>
+      <itemPath>sim-outorder.hpp</itemPath>
       <itemPath>sim.h</itemPath>
       <itemPath>stats.h</itemPath>
       <itemPath>symbol.h</itemPath>
@@ -63,6 +64,7 @@
       <itemPath>regs.c</itemPath>
       <itemPath>resource.c</itemPath>
       <itemPath>sim-outorder.c</itemPath>
+      <itemPath>sim-outorder.cpp</itemPath>
       <itemPath>stats.c</itemPath>
       <itemPath>symbol.c</itemPath>
       <itemPath>target-pisa/symbol.c</itemPath>
@@ -170,6 +172,10 @@
       <item path="resource.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-outorder.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="sim-outorder.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sim.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -307,6 +313,10 @@
       <item path="resource.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sim-outorder.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="sim-outorder.hpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sim.h" ex="false" tool="3" flavor2="0">
       </item>

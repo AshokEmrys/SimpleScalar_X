@@ -1,134 +1,69 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  sim-outorder.hpp
+ *
+ *    Description:  interface for sim-outorder
+ *
+ *        Version:  0.0
+ *        Created:  
+ *       Revision:  none
+ *       Compiler:  g++
+ *
+ *         Author:  Ashok Kumar P (ParokshaX), paroksha.x@gmail.com
+ *        Company:  
+ *        License:  Private (Provisory)
+ *
+ * =====================================================================================
+ */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <assert.h>
-#include <signal.h>
-#include "host.h"
-#include "misc.h"
-#include "machine.h"
-#include "regs.h"
-#include "memory.h"
-#include "cache.h"
-#include "loader.h"
-#include "syscall.h"
-#include "bpred.h"
-#include "resource.h"
-#include "bitmap.h"
-#include "options.h"
-#include "eval.h"
-#include "stats.h"
-#include "ptrace.h"
-#include "dlite.h"
-#include "sim.h"
+#include "sim-outorder.hpp"
+
+/*Sim Outorder Class Definition*/
+
+simoutorder::simoutorder()
+{
+mem = NULL;
+ptrace_nelt = 0;
+bimod_nelt = 1;
+bimod_config[0] = 2048;
+twolev_nelt = 4;
+comb_nelt = 1;
+ras_size = 8;
+btb_nelt = 2;
+ruu_include_spec = TRUE;
+RUU_size = 8;
+LSQ_size = 4;
+mem_nelt = 2;
+pcstat_nelt = 0;
+sim_slip = 0;
+sim_total_insn = 0;
+sim_num_refs = 0;
+sim_total_refs = 0;
+sim_num_loads = 0;
+sim_total_loads = 0;
+sim_num_branches = 0;
+sim_total_branches = 0;
+sim_cycle = 0;
+inst_seq = 0;
+ptrace_seq = 0;
+ruu_fetch_issue_delay = 0;
+pred_perfect = FALSE;
+fu_pool = NULL;
+}
 
 
-
-
-
-
-
-
-struct res_desc fu_config[] = {
-  {
-    "integer-ALU",
-    4,
-    0,
-    {
-      { IntALU, 1, 1 }
-    }
-  },
-  {
-    "integer-MULT/DIV",
-    1,
-    0,
-    {
-      { IntMULT, 3, 1 },
-      { IntDIV, 20, 19 }
-    }
-  },
-  {
-    "memory-port",
-    2,
-    0,
-    {
-      { RdPort, 1, 1 },
-      { WrPort, 1, 1 }
-    }
-  },
-  {
-    "FP-adder",
-    4,
-    0,
-    {
-      { FloatADD, 2, 1 },
-      { FloatCMP, 2, 1 },
-      { FloatCVT, 2, 1 }
-    }
-  },
-  {
-    "FP-MULT/DIV",
-    1,
-    0,
-    {
-      { FloatMULT, 4, 1 },
-      { FloatDIV, 12, 12 },
-      { FloatSQRT, 24, 24 }
-    }
-  },
-};
-static counter_t sim_slip = 0;
-static counter_t sim_total_insn = 0;
-static counter_t sim_num_refs = 0;
-static counter_t sim_total_refs = 0;
-static counter_t sim_num_loads = 0;
-static counter_t sim_total_loads = 0;
-static counter_t sim_num_branches = 0;
-static counter_t sim_total_branches = 0;
-static tick_t sim_cycle = 0;
-static counter_t IFQ_count;		
-static counter_t IFQ_fcount;		
-static counter_t RUU_count;		
-static counter_t RUU_fcount;		
-static counter_t LSQ_count;		
-static counter_t LSQ_fcount;		
-static counter_t sim_invalid_addrs;
-static unsigned int inst_seq = 0;
-static unsigned int ptrace_seq = 0;
-static int spec_mode = FALSE;
-static unsigned ruu_fetch_issue_delay = 0;
-static int pred_perfect = FALSE;
-static char *bpred_spec_opt;
-static enum { spec_ID, spec_WB, spec_CT } bpred_spec_update;
-static struct cache_t *cache_il1;
-static struct cache_t *cache_il2;
-static struct cache_t *cache_dl1;
-static struct cache_t *cache_dl2;
-static struct cache_t *itlb;
-static struct cache_t *dtlb;
-static struct bpred_t *pred;
-static struct res_pool *fu_pool = NULL;
-static struct stat_stat_t *pcstat_stats[MAX_PCSTAT_VARS];
-static counter_t pcstat_lastvals[MAX_PCSTAT_VARS];
-static struct stat_stat_t *pcstat_sdists[MAX_PCSTAT_VARS];
-#define STATVAL(STAT)							\
-  ((STAT)->sc == sc_int							\
-   ? (counter_t)*((STAT)->variant.for_int.var)			\
-   : ((STAT)->sc == sc_uint						\
-      ? (counter_t)*((STAT)->variant.for_uint.var)		\
-      : ((STAT)->sc == sc_counter					\
-	 ? *((STAT)->variant.for_counter.var)				\
-	 : (panic("bad stat class"), 0))))
-static unsigned int			
-mem_access_latency(int blk_sz)		
+unsigned int simoutorder::mem_access_latency(int blk_sz)		
 {
   int chunks = (blk_sz + (mem_bus_width - 1)) / mem_bus_width;
   assert(chunks > 0);
   return (mem_lat[0] +
 	  (mem_lat[1] * (chunks - 1)));
 }
-static unsigned int			
-dl1_access_fn(enum mem_cmd cmd,		
+
+
+unsigned int			
+simoutorder::dl1_access_fn(enum mem_cmd cmd,		
 	      md_addr_t baddr,		
 	      int bsize,		
 	      struct cache_blk_t *blk,	
@@ -156,8 +91,10 @@ dl1_access_fn(enum mem_cmd cmd,
 	}
     }
 }
-static unsigned int			
-dl2_access_fn(enum mem_cmd cmd,		
+
+
+unsigned int			
+simoutorder::dl2_access_fn(enum mem_cmd cmd,		
 	      md_addr_t baddr,		
 	      int bsize,		
 	      struct cache_blk_t *blk,	
@@ -170,8 +107,9 @@ dl2_access_fn(enum mem_cmd cmd,
       return 0;
     }
 }
-static unsigned int			
-il1_access_fn(enum mem_cmd cmd,		
+
+unsigned int			
+simoutorder::il1_access_fn(enum mem_cmd cmd,		
 	      md_addr_t baddr,		
 	      int bsize,		
 	      struct cache_blk_t *blk,	
@@ -195,8 +133,9 @@ if (cache_il2)
 	panic("writes to instruction memory not supported");
     }
 }
-static unsigned int			
-il2_access_fn(enum mem_cmd cmd,		
+
+unsigned int			
+simoutorder::il2_access_fn(enum mem_cmd cmd,		
 	      md_addr_t baddr,		
 	      int bsize,		
 	      struct cache_blk_t *blk,	
@@ -207,8 +146,9 @@ il2_access_fn(enum mem_cmd cmd,
   else
     panic("writes to instruction memory not supported");
 }
-static unsigned int			
-itlb_access_fn(enum mem_cmd cmd,	
+
+unsigned int			
+simoutorder::itlb_access_fn(enum mem_cmd cmd,	
 	       md_addr_t baddr,		
 	       int bsize,		
 	       struct cache_blk_t *blk,	
@@ -219,8 +159,9 @@ itlb_access_fn(enum mem_cmd cmd,
   *phy_page_ptr = 0;
   return tlb_miss_lat;
 }
-static unsigned int			
-dtlb_access_fn(enum mem_cmd cmd,	
+
+unsigned int			
+simoutorder::dtlb_access_fn(enum mem_cmd cmd,	
 	       md_addr_t baddr,	
 	       int bsize,		
 	       struct cache_blk_t *blk,	
@@ -231,8 +172,9 @@ dtlb_access_fn(enum mem_cmd cmd,
   *phy_page_ptr = 0;
   return tlb_miss_lat;
 }
+
 void
-sim_reg_options(struct opt_odb_t *odb)
+simoutorder::sim_reg_options(struct opt_odb_t *odb)
 {
   opt_reg_header(odb, 
 "sim-outorder: This simulator implements a very detailed out-of-order issue\n"
@@ -464,8 +406,9 @@ sim_reg_options(struct opt_odb_t *odb)
 	       "operate in backward-compatible bugs mode (for testing only)",
 	       &bugcompat_mode, FALSE, TRUE, NULL);
 }
+
 void
-sim_check_options(struct opt_odb_t *odb,        
+simoutorder::sim_check_options(struct opt_odb_t *odb,        
 		  int argc, char **argv)        
 {
   char name[128], c;
@@ -712,12 +655,8 @@ sim_check_options(struct opt_odb_t *odb,
     fatal("number of FP mult/div's must be <= MAX_INSTS_PER_CLASS");
   fu_config[FU_FPMULT_INDEX].quantity = res_fpmult;
 }
-void
-sim_aux_config(FILE *stream)            
-{
-}
-void
-sim_reg_stats(struct stat_sdb_t *sdb)   
+
+simoutorder::sim_reg_stats(struct stat_sdb_t *sdb)   
 {
   int i;
   stat_reg_counter(sdb, "sim_num_insn",
@@ -855,42 +794,23 @@ sim_reg_stats(struct stat_sdb_t *sdb)
   ld_reg_stats(sdb);
   mem_reg_stats(mem, sdb);
 }
-static void ruu_init(void);
-static void lsq_init(void);
-static void rslink_init(int nlinks);
-static void eventq_init(void);
-static void readyq_init(void);
-static void cv_init(void);
-static void tracer_init(void);
-static void fetch_init(void);
+
 void
-sim_init(void)
+simoutorder::sim_aux_config(FILE *stream)            
+{
+}
+
+void
+simoutorder::sim_init(void)
 {
   sim_num_refs = 0;
   regs_init(&regs);
   mem = mem_create("mem");
   mem_init(mem);
 }
-static char *					
-simoo_reg_obj(struct regs_t *regs,		
-	      int is_write,			
-	      enum md_reg_type rt,		
-	      int reg,				
-	      struct eval_value_t *val);	
-static char *					
-simoo_mem_obj(struct mem_t *mem,		
-	      int is_write,			
-	      md_addr_t addr,			
-	      char *p,				
-	      int nbytes);			
-static char *					
-simoo_mstate_obj(FILE *stream,			
-		 char *cmd,			
-		 struct regs_t *regs,		
-		 struct mem_t *mem);		
-#define MAX_RS_LINKS                    4096
+
 void
-sim_load_prog(char *fname,		
+simoutorder::sim_load_prog(char *fname,		
 	      int argc, char **argv,	
 	      char **envp)		
 {
@@ -916,49 +836,21 @@ sim_load_prog(char *fname,
   lsq_init();
   dlite_init(simoo_reg_obj, simoo_mem_obj, simoo_mstate_obj);
 }
+
 void
-sim_aux_stats(FILE *stream)             
+simoutorder::sim_aux_stats(FILE *stream)             
 {
 }
+
 void
-sim_uninit(void)
+simoutorder::sim_uninit(void)
 {
   if (ptrace_nelt > 0)
     ptrace_close();
 }
-typedef unsigned int INST_TAG_TYPE;
-typedef unsigned int INST_SEQ_TYPE;
-#define MAX_IDEPS               3
-#define MAX_ODEPS               2
-struct RUU_station {
-  md_inst_t IR;			
-  enum md_opcode op;			
-  md_addr_t PC, next_PC, pred_PC;	
-  int in_LSQ;				
-  int ea_comp;				
-  int recover_inst;			
-  int stack_recover_idx;		
-  struct bpred_update_t dir_update;	
-  int spec_mode;			
-  md_addr_t addr;			
-  INST_TAG_TYPE tag;			
-  INST_SEQ_TYPE seq;			
-  unsigned int ptrace_seq;		
-  int slip;
-  int queued;				
-  int issued;				
-  int completed;			
-  int onames[MAX_ODEPS];		
-  struct RS_link *odep_list[MAX_ODEPS];	
-  int idep_ready[MAX_IDEPS];		
-};
-#define OPERANDS_READY(RS)                                              \
-  ((RS)->idep_ready[0] && (RS)->idep_ready[1] && (RS)->idep_ready[2])
-static struct RUU_station *RUU;		
-static int RUU_head, RUU_tail;		
-static int RUU_num;			
-static void
-ruu_init(void)
+
+void
+simoutorder::ruu_init(void)
 {
   RUU = calloc(RUU_size, sizeof(struct RUU_station));
   if (!RUU)
@@ -968,8 +860,9 @@ ruu_init(void)
   RUU_count = 0;
   RUU_fcount = 0;
 }
-static void
-ruu_dumpent(struct RUU_station *rs,		
+
+void
+simoutorder::ruu_dumpent(struct RUU_station *rs,		
 	    int index,				
 	    FILE *stream,			
 	    int header)				
@@ -1001,8 +894,9 @@ ruu_dumpent(struct RUU_station *rs,
   fprintf(stream, "         operands ready: %s\n",
 	  OPERANDS_READY(rs) ? "t" : "f");
 }
-static void
-ruu_dump(FILE *stream)				
+
+void
+simoutorder::ruu_dump(FILE *stream)				
 {
   int num, head;
   struct RUU_station *rs;
@@ -1021,15 +915,9 @@ ruu_dump(FILE *stream)
       num--;
     }
 }
-static struct RUU_station *LSQ;         
-static int LSQ_head, LSQ_tail;          
-static int LSQ_num;                     
-#define STORE_OP_INDEX                  0
-#define STORE_ADDR_INDEX                1
-#define STORE_OP_READY(RS)              ((RS)->idep_ready[STORE_OP_INDEX])
-#define STORE_ADDR_READY(RS)            ((RS)->idep_ready[STORE_ADDR_INDEX])
-static void
-lsq_init(void)
+
+void
+simoutorder::lsq_init(void)
 {
   LSQ = calloc(LSQ_size, sizeof(struct RUU_station));
   if (!LSQ)
@@ -1039,8 +927,9 @@ lsq_init(void)
   LSQ_count = 0;
   LSQ_fcount = 0;
 }
-static void
-lsq_dump(FILE *stream)				
+
+void
+simoutorder::lsq_dump(FILE *stream)				
 {
   int num, head;
   struct RUU_station *rs;
@@ -1059,50 +948,9 @@ lsq_dump(FILE *stream)
       num--;
     }
 }
-struct RS_link {
-  struct RS_link *next;			
-  struct RUU_station *rs;		
-  INST_TAG_TYPE tag;			
-  union {
-    tick_t when;			
-    INST_SEQ_TYPE seq;			
-    int opnum;				
-  } x;
-};
-static struct RS_link *rslink_free_list;
-#define RSLINK_NULL_DATA		{ NULL, NULL, 0 }
-static struct RS_link RSLINK_NULL = RSLINK_NULL_DATA;
-#define RSLINK_INIT(RSL, RS)						\
-  ((RSL).next = NULL, (RSL).rs = (RS), (RSL).tag = (RS)->tag)
-#define RSLINK_IS_NULL(LINK)            ((LINK)->rs == NULL)
-#define RSLINK_VALID(LINK)              ((LINK)->tag == (LINK)->rs->tag)
-#define RSLINK_RS(LINK)                 ((LINK)->rs)
-#define RSLINK_NEW(DST, RS)						\
-  { struct RS_link *n_link;						\
-    if (!rslink_free_list)						\
-      panic("out of rs links");						\
-    n_link = rslink_free_list;						\
-    rslink_free_list = rslink_free_list->next;				\
-    n_link->next = NULL;						\
-    n_link->rs = (RS); n_link->tag = n_link->rs->tag;			\
-    (DST) = n_link;							\
-  }
-#define RSLINK_FREE(LINK)						\
-  {  struct RS_link *f_link = (LINK);					\
-     f_link->rs = NULL; f_link->tag = 0;				\
-     f_link->next = rslink_free_list;					\
-     rslink_free_list = f_link;						\
-  }
-#define RSLINK_FREE_LIST(LINK)						\
-  {  struct RS_link *fl_link, *fl_link_next;				\
-     for (fl_link=(LINK); fl_link; fl_link=fl_link_next)		\
-       {								\
-	 fl_link_next = fl_link->next;					\
-	 RSLINK_FREE(fl_link);						\
-       }								\
-  }
-static void
-rslink_init(int nlinks)			
+
+void
+simoutorder::rslink_init(int nlinks)			
 {
   int i;
   struct RS_link *link;
@@ -1116,8 +964,9 @@ rslink_init(int nlinks)
       rslink_free_list = link;
     }
 }
-static void
-ruu_release_fu(void)
+
+void
+simoutorder::ruu_release_fu(void)
 {
   int i;
   for (i=0; i<fu_pool->num_resources; i++)
@@ -1126,14 +975,15 @@ ruu_release_fu(void)
 	fu_pool->resources[i].busy--;
     }
 }
-static struct RS_link *event_queue;
-static void
-eventq_init(void)
+
+void
+simoutorder::eventq_init(void)
 {
   event_queue = NULL;
 }
-static void
-eventq_dump(FILE *stream)			
+
+void
+simoutorder::eventq_dump(FILE *stream)			
 {
   struct RS_link *ev;
   if (!stream)
@@ -1151,8 +1001,9 @@ eventq_dump(FILE *stream)
 	}
     }
 }
-static void
-eventq_queue_event(struct RUU_station *rs, tick_t when)
+
+void
+simoutorder::eventq_queue_event(struct RUU_station *rs, tick_t when)
 {
   struct RS_link *prev, *ev, *new_ev;
   if (rs->completed)
@@ -1175,8 +1026,9 @@ eventq_queue_event(struct RUU_station *rs, tick_t when)
       event_queue = new_ev;
     }
 }
-static struct RUU_station *
-eventq_next_event(void)
+
+struct RUU_station *
+simoutorder::eventq_next_event(void)
 {
   struct RS_link *ev;
   if (event_queue && event_queue->x.when <= sim_cycle)
@@ -1200,14 +1052,15 @@ eventq_next_event(void)
       return NULL;
     }
 }
-static struct RS_link *ready_queue;
-static void
-readyq_init(void)
+
+void
+simoutorder::readyq_init(void)
 {
   ready_queue = NULL;
 }
-static void
-readyq_dump(FILE *stream)			
+
+void
+simoutorder::readyq_dump(FILE *stream)			
 {
   struct RS_link *link;
   if (!stream)
@@ -1223,8 +1076,9 @@ readyq_dump(FILE *stream)
 	}
     }
 }
-static void
-readyq_enqueue(struct RUU_station *rs)		
+
+void
+simoutorder::readyq_enqueue(struct RUU_station *rs)		
 {
   struct RS_link *prev, *node, *new_node;
   if (rs->queued)
@@ -1254,30 +1108,9 @@ readyq_enqueue(struct RUU_station *rs)
       ready_queue = new_node;
     }
 }
-struct CV_link {
-  struct RUU_station *rs;               
-  int odep_num;                         
-};
-static struct CV_link CVLINK_NULL = { NULL, 0 };
-#define CVLINK_INIT(CV, RS,ONUM)	((CV).rs = (RS), (CV).odep_num = (ONUM))
-#define CV_BMAP_SZ              (BITMAP_SIZE(MD_TOTAL_REGS))
-static BITMAP_TYPE(MD_TOTAL_REGS, use_spec_cv);
-static struct CV_link create_vector[MD_TOTAL_REGS];
-static struct CV_link spec_create_vector[MD_TOTAL_REGS];
-static tick_t create_vector_rt[MD_TOTAL_REGS];
-static tick_t spec_create_vector_rt[MD_TOTAL_REGS];
-#define CREATE_VECTOR(N)        (BITMAP_SET_P(use_spec_cv, CV_BMAP_SZ, (N))\
-				 ? spec_create_vector[N]                \
-				 : create_vector[N])
-#define CREATE_VECTOR_RT(N)     (BITMAP_SET_P(use_spec_cv, CV_BMAP_SZ, (N))\
-				 ? spec_create_vector_rt[N]             \
-				 : create_vector_rt[N])
-#define SET_CREATE_VECTOR(N, L) (spec_mode                              \
-				 ? (BITMAP_SET(use_spec_cv, CV_BMAP_SZ, (N)),\
-				    spec_create_vector[N] = (L))        \
-				 : (create_vector[N] = (L)))
-static void
-cv_init(void)
+
+void
+simoutorder::cv_init(void)
 {
   int i;
   for (i=0; i < MD_TOTAL_REGS; i++)
@@ -1289,8 +1122,9 @@ cv_init(void)
     }
   BITMAP_CLEAR_MAP(use_spec_cv, CV_BMAP_SZ);
 }
-static void
-cv_dump(FILE *stream)				
+
+void
+simoutorder::cv_dump(FILE *stream)				
 {
   int i;
   struct CV_link ent;
@@ -1308,8 +1142,9 @@ cv_dump(FILE *stream)
 		(int)(ent.rs - (ent.rs->in_LSQ ? LSQ : RUU)));
     }
 }
-static void
-ruu_commit(void)
+
+void
+simoutorder::ruu_commit(void)
 {
   int i, lat, events, committed = 0;
   static counter_t sim_ret_insn = 0;
@@ -1406,8 +1241,9 @@ ruu_commit(void)
         }
     }
 }
-static void
-ruu_recover(int branch_index)			
+
+void
+simoutorder::ruu_recover(int branch_index)			
 {
   int i, RUU_index = RUU_tail, LSQ_index = LSQ_tail;
   int RUU_prev_tail = RUU_tail, LSQ_prev_tail = LSQ_tail;
@@ -1449,9 +1285,10 @@ ruu_recover(int branch_index)
   LSQ_tail = LSQ_prev_tail;
   BITMAP_CLEAR_MAP(use_spec_cv, CV_BMAP_SZ);
 }
-static void tracer_recover(void);
-static void
-ruu_writeback(void)
+
+
+void
+simoutorder::ruu_writeback(void)
 {
   int i;
   struct RUU_station *rs;
@@ -1536,9 +1373,9 @@ ruu_writeback(void)
 	} 
    } 
 }
-#define MAX_STD_UNKNOWNS		64
-static void
-lsq_refresh(void)
+
+void
+simoutorder::lsq_refresh(void)
 {
   int i, j, index, n_std_unknowns;
   md_addr_t std_unknowns[MAX_STD_UNKNOWNS];
@@ -1587,8 +1424,9 @@ lsq_refresh(void)
 	}
     }
 }
-static void
-ruu_issue(void)
+
+void
+simoutorder::ruu_issue(void)
 {
   int i, load_lat, tlb_lat, n_issued;
   struct RS_link *node, *next_node;
@@ -1722,17 +1560,9 @@ ruu_issue(void)
       RSLINK_FREE(node);
     }
 }
-#define R_BMAP_SZ       (BITMAP_SIZE(MD_NUM_IREGS))
-static BITMAP_TYPE(MD_NUM_IREGS, use_spec_R);
-static md_gpr_t spec_regs_R;
-#define F_BMAP_SZ       (BITMAP_SIZE(MD_NUM_FREGS))
-static BITMAP_TYPE(MD_NUM_FREGS, use_spec_F);
-static md_fpr_t spec_regs_F;
-#define C_BMAP_SZ       (BITMAP_SIZE(MD_NUM_CREGS))
-static BITMAP_TYPE(MD_NUM_FREGS, use_spec_C);
-static md_ctrl_t spec_regs_C;
-static void
-rspec_dump(FILE *stream)			
+
+void
+simoutorder::rspec_dump(FILE *stream)			
 {
   int i;
   if (!stream)
@@ -1764,77 +1594,9 @@ rspec_dump(FILE *stream)
 	}
     }
 }
-#define STORE_HASH_SIZE		32
-struct spec_mem_ent {
-  struct spec_mem_ent *next;		
-  md_addr_t addr;			
-  unsigned int data[2];			
-};
-static struct spec_mem_ent *store_htable[STORE_HASH_SIZE];
-static struct spec_mem_ent *bucket_free_list = NULL;
-static md_addr_t pred_PC;
-static md_addr_t recover_PC;
-static md_addr_t fetch_regs_PC;
-static md_addr_t fetch_pred_PC;
-struct fetch_rec {
-  md_inst_t IR;				
-  md_addr_t regs_PC, pred_PC;		
-  struct bpred_update_t dir_update;	
-  int stack_recover_idx;		
-  unsigned int ptrace_seq;		
-};
-static struct fetch_rec *fetch_data;	
-static int fetch_num;			
-static int fetch_tail, fetch_head;	
-static void
-tracer_recover(void)
-{
-  int i;
-  struct spec_mem_ent *ent, *ent_next;
-  if (!spec_mode)
-    panic("cannot recover unless in speculative mode");
-  spec_mode = FALSE;
-  BITMAP_CLEAR_MAP(use_spec_R, R_BMAP_SZ);
-  BITMAP_CLEAR_MAP(use_spec_F, F_BMAP_SZ);
-  BITMAP_CLEAR_MAP(use_spec_C, C_BMAP_SZ);
-  for (i=0; i<STORE_HASH_SIZE; i++)
-    {
-      for (ent=store_htable[i]; ent; ent=ent_next)
-	{
-	  ent_next = ent->next;
-	  ent->next = bucket_free_list;
-	  bucket_free_list = ent;
-	}
-      store_htable[i] = NULL;
-    }
-  if (ptrace_active)
-    {
-      while (fetch_num != 0)
-	{
-	  ptrace_endinst(fetch_data[fetch_head].ptrace_seq);
-	  fetch_head = (fetch_head+1) & (ruu_ifq_size - 1);
-	  fetch_num--;
-	}
-    }
-  fetch_num = 0;
-  fetch_tail = fetch_head = 0;
-  fetch_pred_PC = fetch_regs_PC = recover_PC;
-}
-static void
-tracer_init(void)
-{
-  int i;
-  spec_mode = FALSE;
-  BITMAP_CLEAR_MAP(use_spec_R, R_BMAP_SZ);
-  BITMAP_CLEAR_MAP(use_spec_F, F_BMAP_SZ);
-  BITMAP_CLEAR_MAP(use_spec_C, C_BMAP_SZ);
-  for (i=0; i<STORE_HASH_SIZE; i++)
-    store_htable[i] = NULL;
-}
-#define HASH_ADDR(ADDR)							\
-  ((((ADDR) >> 24)^((ADDR) >> 16)^((ADDR) >> 8)^(ADDR)) & (STORE_HASH_SIZE-1))
-static enum md_fault_type
-spec_mem_access(struct mem_t *mem,		
+
+enum md_fault_type
+simoutorder::spec_mem_access(struct mem_t *mem,		
 		enum mem_cmd cmd,		
 		md_addr_t addr,			
 		void *p,			
@@ -1967,8 +1729,56 @@ spec_mem_access(struct mem_t *mem,
     }
   return md_fault_none;
 }
-static void
-mspec_dump(FILE *stream)			
+
+void
+simoutorder::tracer_recover(void)
+{
+  int i;
+  struct spec_mem_ent *ent, *ent_next;
+  if (!spec_mode)
+    panic("cannot recover unless in speculative mode");
+  spec_mode = FALSE;
+  BITMAP_CLEAR_MAP(use_spec_R, R_BMAP_SZ);
+  BITMAP_CLEAR_MAP(use_spec_F, F_BMAP_SZ);
+  BITMAP_CLEAR_MAP(use_spec_C, C_BMAP_SZ);
+  for (i=0; i<STORE_HASH_SIZE; i++)
+    {
+      for (ent=store_htable[i]; ent; ent=ent_next)
+	{
+	  ent_next = ent->next;
+	  ent->next = bucket_free_list;
+	  bucket_free_list = ent;
+	}
+      store_htable[i] = NULL;
+    }
+  if (ptrace_active)
+    {
+      while (fetch_num != 0)
+	{
+	  ptrace_endinst(fetch_data[fetch_head].ptrace_seq);
+	  fetch_head = (fetch_head+1) & (ruu_ifq_size - 1);
+	  fetch_num--;
+	}
+    }
+  fetch_num = 0;
+  fetch_tail = fetch_head = 0;
+  fetch_pred_PC = fetch_regs_PC = recover_PC;
+}
+
+void
+simoutorder::tracer_init(void)
+{
+  int i;
+  spec_mode = FALSE;
+  BITMAP_CLEAR_MAP(use_spec_R, R_BMAP_SZ);
+  BITMAP_CLEAR_MAP(use_spec_F, F_BMAP_SZ);
+  BITMAP_CLEAR_MAP(use_spec_C, C_BMAP_SZ);
+  for (i=0; i<STORE_HASH_SIZE; i++)
+    store_htable[i] = NULL;
+}
+
+void
+simoutorder::mspec_dump(FILE *stream)			
 {
   int i;
   struct spec_mem_ent *ent;
@@ -1987,8 +1797,9 @@ mspec_dump(FILE *stream)
 	}
     }
 }
-static char *					
-simoo_mem_obj(struct mem_t *mem,		
+
+char *					
+simoutorder::simoo_mem_obj(struct mem_t *mem,		
 	      int is_write,			
 	      md_addr_t addr,			
 	      char *p,				
@@ -2011,8 +1822,9 @@ simoo_mem_obj(struct mem_t *mem,
     mem_access(mem, cmd, addr, p, nbytes);
   return NULL;
 }
-static INLINE void
-ruu_link_idep(struct RUU_station *rs,		
+
+INLINE void
+simoutorder::ruu_link_idep(struct RUU_station *rs,		
 	      int idep_num,			
 	      int idep_name)			
 {
@@ -2034,8 +1846,9 @@ ruu_link_idep(struct RUU_station *rs,
   link->next = head.rs->odep_list[head.odep_num];
   head.rs->odep_list[head.odep_num] = link;
 }
-static INLINE void
-ruu_install_odep(struct RUU_station *rs,	
+
+INLINE void
+simoutorder::ruu_install_odep(struct RUU_station *rs,	
 		 int odep_num,			
 		 int odep_name)			
 {
@@ -2050,169 +1863,9 @@ ruu_install_odep(struct RUU_station *rs,
   CVLINK_INIT(cv, rs, odep_num);
   SET_CREATE_VECTOR(odep_name, cv);
 }
-#define DNA			(0)
-#if defined(TARGET_PISA)
-#define DGPR(N)			(N)
-#define DGPR_D(N)		((N) &~1)
-#define DFPR_L(N)		(((N)+32)&~1)
-#define DFPR_F(N)		(((N)+32)&~1)
-#define DFPR_D(N)		(((N)+32)&~1)
-#define DHI			(0+32+32)
-#define DLO			(1+32+32)
-#define DFCC			(2+32+32)
-#define DTMP			(3+32+32)
-#elif defined(TARGET_ALPHA)
-#define DGPR(N)			(31 - (N)) 
-#define DFPR(N)			(((N) == 31) ? DNA : ((N)+32))
-#define DFPCR			(0+32+32)
-#define DUNIQ			(1+32+32)
-#define DTMP			(2+32+32)
-#else
-#error No ISA target defined...
-#endif
-#define SET_NPC(EXPR)           (regs.regs_NPC = (EXPR))
-#undef  SET_TPC
-#define SET_TPC(EXPR)		(target_PC = (EXPR))
-#define CPC                     (regs.regs_PC)
-#define SET_CPC(EXPR)           (regs.regs_PC = (EXPR))
-#define GPR(N)                  (BITMAP_SET_P(use_spec_R, R_BMAP_SZ, (N))\
-				 ? spec_regs_R[N]                       \
-				 : regs.regs_R[N])
-#define SET_GPR(N,EXPR)         (spec_mode				\
-				 ? ((spec_regs_R[N] = (EXPR)),		\
-				    BITMAP_SET(use_spec_R, R_BMAP_SZ, (N)),\
-				    spec_regs_R[N])			\
-				 : (regs.regs_R[N] = (EXPR)))
-#if defined(TARGET_PISA)
-#define FPR_L(N)                (BITMAP_SET_P(use_spec_F, F_BMAP_SZ, ((N)&~1))\
-				 ? spec_regs_F.l[(N)]                   \
-				 : regs.regs_F.l[(N)])
-#define SET_FPR_L(N,EXPR)       (spec_mode				\
-				 ? ((spec_regs_F.l[(N)] = (EXPR)),	\
-				    BITMAP_SET(use_spec_F,F_BMAP_SZ,((N)&~1)),\
-				    spec_regs_F.l[(N)])			\
-				 : (regs.regs_F.l[(N)] = (EXPR)))
-#define FPR_F(N)                (BITMAP_SET_P(use_spec_F, F_BMAP_SZ, ((N)&~1))\
-				 ? spec_regs_F.f[(N)]                   \
-				 : regs.regs_F.f[(N)])
-#define SET_FPR_F(N,EXPR)       (spec_mode				\
-				 ? ((spec_regs_F.f[(N)] = (EXPR)),	\
-				    BITMAP_SET(use_spec_F,F_BMAP_SZ,((N)&~1)),\
-				    spec_regs_F.f[(N)])			\
-				 : (regs.regs_F.f[(N)] = (EXPR)))
-#define FPR_D(N)                (BITMAP_SET_P(use_spec_F, F_BMAP_SZ, ((N)&~1))\
-				 ? spec_regs_F.d[(N) >> 1]              \
-				 : regs.regs_F.d[(N) >> 1])
-#define SET_FPR_D(N,EXPR)       (spec_mode				\
-				 ? ((spec_regs_F.d[(N) >> 1] = (EXPR)),	\
-				    BITMAP_SET(use_spec_F,F_BMAP_SZ,((N)&~1)),\
-				    spec_regs_F.d[(N) >> 1])		\
-				 : (regs.regs_F.d[(N) >> 1] = (EXPR)))
-#define HI			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ, 0)\
-				 ? spec_regs_C.hi			\
-				 : regs.regs_C.hi)
-#define SET_HI(EXPR)		(spec_mode				\
-				 ? ((spec_regs_C.hi = (EXPR)),		\
-				    BITMAP_SET(use_spec_C, C_BMAP_SZ,0),\
-				    spec_regs_C.hi)			\
-				 : (regs.regs_C.hi = (EXPR)))
-#define LO			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ, 1)\
-				 ? spec_regs_C.lo			\
-				 : regs.regs_C.lo)
-#define SET_LO(EXPR)		(spec_mode				\
-				 ? ((spec_regs_C.lo = (EXPR)),		\
-				    BITMAP_SET(use_spec_C, C_BMAP_SZ,1),\
-				    spec_regs_C.lo)			\
-				 : (regs.regs_C.lo = (EXPR)))
-#define FCC			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,2)\
-				 ? spec_regs_C.fcc			\
-				 : regs.regs_C.fcc)
-#define SET_FCC(EXPR)		(spec_mode				\
-				 ? ((spec_regs_C.fcc = (EXPR)),		\
-				    BITMAP_SET(use_spec_C,C_BMAP_SZ,2),\
-				    spec_regs_C.fcc)			\
-				 : (regs.regs_C.fcc = (EXPR)))
-#elif defined(TARGET_ALPHA)
-#define FPR_Q(N)		(BITMAP_SET_P(use_spec_F, F_BMAP_SZ, (N))\
-				 ? spec_regs_F.q[(N)]                   \
-				 : regs.regs_F.q[(N)])
-#define SET_FPR_Q(N,EXPR)	(spec_mode				\
-				 ? ((spec_regs_F.q[(N)] = (EXPR)),	\
-				    BITMAP_SET(use_spec_F,F_BMAP_SZ, (N)),\
-				    spec_regs_F.q[(N)])			\
-				 : (regs.regs_F.q[(N)] = (EXPR)))
-#define FPR(N)			(BITMAP_SET_P(use_spec_F, F_BMAP_SZ, (N))\
-				 ? spec_regs_F.d[(N)]			\
-				 : regs.regs_F.d[(N)])
-#define SET_FPR(N,EXPR)		(spec_mode				\
-				 ? ((spec_regs_F.d[(N)] = (EXPR)),	\
-				    BITMAP_SET(use_spec_F,F_BMAP_SZ, (N)),\
-				    spec_regs_F.d[(N)])			\
-				 : (regs.regs_F.d[(N)] = (EXPR)))
-#define FPCR			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,0)\
-				 ? spec_regs_C.fpcr			\
-				 : regs.regs_C.fpcr)
-#define SET_FPCR(EXPR)		(spec_mode				\
-				 ? ((spec_regs_C.fpcr = (EXPR)),	\
-				   BITMAP_SET(use_spec_C,C_BMAP_SZ,0),\
-				    spec_regs_C.fpcr)			\
-				 : (regs.regs_C.fpcr = (EXPR)))
-#define UNIQ			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,1)\
-				 ? spec_regs_C.uniq			\
-				 : regs.regs_C.uniq)
-#define SET_UNIQ(EXPR)		(spec_mode				\
-				 ? ((spec_regs_C.uniq = (EXPR)),	\
-				   BITMAP_SET(use_spec_C,C_BMAP_SZ,1),\
-				    spec_regs_C.uniq)			\
-				 : (regs.regs_C.uniq = (EXPR)))
-#define FCC			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,2)\
-				 ? spec_regs_C.fcc			\
-				 : regs.regs_C.fcc)
-#define SET_FCC(EXPR)		(spec_mode				\
-				 ? ((spec_regs_C.fcc = (EXPR)),		\
-				    BITMAP_SET(use_spec_C,C_BMAP_SZ,1),\
-				    spec_regs_C.fcc)			\
-				 : (regs.regs_C.fcc = (EXPR)))
-#else
-#error No ISA target defined...
-#endif
-#define __READ_SPECMEM(SRC, SRC_V, FAULT)				\
-  (addr = (SRC),							\
-   (spec_mode								\
-    ? ((FAULT) = spec_mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))\
-    : ((FAULT) = mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))),	\
-   SRC_V)
-#define READ_BYTE(SRC, FAULT)						\
-  __READ_SPECMEM((SRC), temp_byte, (FAULT))
-#define READ_HALF(SRC, FAULT)						\
-  MD_SWAPH(__READ_SPECMEM((SRC), temp_half, (FAULT)))
-#define READ_WORD(SRC, FAULT)						\
-  MD_SWAPW(__READ_SPECMEM((SRC), temp_word, (FAULT)))
-#ifdef HOST_HAS_QWORD
-#define READ_QWORD(SRC, FAULT)						\
-  MD_SWAPQ(__READ_SPECMEM((SRC), temp_qword, (FAULT)))
-#endif 
-#define __WRITE_SPECMEM(SRC, DST, DST_V, FAULT)				\
-  (DST_V = (SRC), addr = (DST),						\
-   (spec_mode								\
-    ? ((FAULT) = spec_mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))\
-    : ((FAULT) = mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))))
-#define WRITE_BYTE(SRC, DST, FAULT)					\
-  __WRITE_SPECMEM((SRC), (DST), temp_byte, (FAULT))
-#define WRITE_HALF(SRC, DST, FAULT)					\
-  __WRITE_SPECMEM(MD_SWAPH(SRC), (DST), temp_half, (FAULT))
-#define WRITE_WORD(SRC, DST, FAULT)					\
-  __WRITE_SPECMEM(MD_SWAPW(SRC), (DST), temp_word, (FAULT))
-#ifdef HOST_HAS_QWORD
-#define WRITE_QWORD(SRC, DST, FAULT)					\
-  __WRITE_SPECMEM(MD_SWAPQ(SRC), (DST), temp_qword, (FAULT))
-#endif 
-#define SYSCALL(INST)							\
-  (		\
-   (spec_mode ? panic("speculative syscall") : (void) 0),		\
-   sys_syscall(&regs, mem_access, mem, INST, TRUE))
-static char *					
-simoo_reg_obj(struct regs_t *xregs,		
+
+char *					
+simoutorder::simoo_reg_obj(struct regs_t *xregs,		
 	      int is_write,			
 	      enum md_reg_type rt,		
 	      int reg,				
@@ -2309,9 +1962,9 @@ simoo_reg_obj(struct regs_t *xregs,
     }
   return NULL;
 }
-static struct RS_link last_op = RSLINK_NULL_DATA;
-static void
-ruu_dispatch(void)
+
+void
+simoutorder::ruu_dispatch(void)
 {
   int i;
   int n_dispatched;			
@@ -2612,8 +2265,9 @@ ruu_dispatch(void)
 	dlite_main(regs.regs_PC, 0, sim_cycle, &regs, mem);
     }
 }
-static void
-fetch_init(void)
+
+void
+simoutorder::fetch_init(void)
 {
   fetch_data =
     (struct fetch_rec *)calloc(ruu_ifq_size, sizeof(struct fetch_rec));
@@ -2624,8 +2278,9 @@ fetch_init(void)
   IFQ_count = 0;
   IFQ_fcount = 0;
 }
+
 void
-fetch_dump(FILE *stream)			
+simoutorder::fetch_dump(FILE *stream)			
 {
   int num, head;
   if (!stream)
@@ -2654,10 +2309,9 @@ fetch_dump(FILE *stream)
       num--;
     }
 }
-static int last_inst_missed = FALSE;
-static int last_inst_tmissed = FALSE;
-static void
-ruu_fetch(void)
+
+void
+simoutorder::ruu_fetch(void)
 {
   int i, lat, tlb_lat, done = FALSE;
   md_inst_t inst;
@@ -2754,8 +2408,9 @@ ruu_fetch(void)
       fetch_num++;
     }
 }
-static char *					
-simoo_mstate_obj(FILE *stream,			
+
+char *					
+simoutorder::simoo_mstate_obj(FILE *stream,			
 		 char *cmd,			
 		 struct regs_t *regs,		
 		 struct mem_t *mem)		
@@ -2821,8 +2476,9 @@ simoo_mstate_obj(FILE *stream,
     return "unknown mstate command";
   return NULL;
 }
+
 void
-sim_main(void)
+simoutorder::sim_main(void)
 {
   signal(SIGFPE, SIG_IGN);
   regs.regs_PC = ld_prog_entry;

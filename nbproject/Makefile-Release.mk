@@ -53,6 +53,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/regs.o \
 	${OBJECTDIR}/resource.o \
 	${OBJECTDIR}/sim-outorder.o \
+	${OBJECTDIR}/sim-outorder.o \
 	${OBJECTDIR}/stats.o \
 	${OBJECTDIR}/symbol.o \
 	${OBJECTDIR}/syscall.o \
@@ -85,7 +86,7 @@ LDLIBSOPTIONS=
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simplescalar: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simplescalar ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simplescalar ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/bpred.o: bpred.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -176,6 +177,11 @@ ${OBJECTDIR}/sim-outorder.o: sim-outorder.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-outorder.o sim-outorder.c
+
+${OBJECTDIR}/sim-outorder.o: sim-outorder.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-outorder.o sim-outorder.cpp
 
 ${OBJECTDIR}/stats.o: stats.c 
 	${MKDIR} -p ${OBJECTDIR}
