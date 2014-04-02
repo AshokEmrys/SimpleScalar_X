@@ -8,17 +8,24 @@
       <itemPath>bpred.h</itemPath>
       <itemPath>cache.h</itemPath>
       <itemPath>config.h</itemPath>
+      <itemPath>target-pisa/config.h</itemPath>
+      <itemPath>target-pisa/configbig.h</itemPath>
+      <itemPath>target-pisa/configlit.h</itemPath>
       <itemPath>dlite.h</itemPath>
+      <itemPath>target-pisa/ecoff.h</itemPath>
       <itemPath>eio.h</itemPath>
       <itemPath>endian.h</itemPath>
       <itemPath>eval.h</itemPath>
       <itemPath>eventq.h</itemPath>
       <itemPath>host.h</itemPath>
       <itemPath>loader.h</itemPath>
+      <itemPath>machine.def</itemPath>
       <itemPath>machine.h</itemPath>
       <itemPath>memory.h</itemPath>
       <itemPath>misc.h</itemPath>
       <itemPath>options.h</itemPath>
+      <itemPath>target-pisa/pisa.def</itemPath>
+      <itemPath>target-pisa/pisa.h</itemPath>
       <itemPath>ptrace.h</itemPath>
       <itemPath>range.h</itemPath>
       <itemPath>regs.h</itemPath>
@@ -44,25 +51,23 @@
       <itemPath>eval.c</itemPath>
       <itemPath>eventq.c</itemPath>
       <itemPath>loader.c</itemPath>
+      <itemPath>target-pisa/loader.c</itemPath>
       <itemPath>machine.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>memory.c</itemPath>
       <itemPath>misc.c</itemPath>
       <itemPath>options.c</itemPath>
+      <itemPath>target-pisa/pisa.c</itemPath>
       <itemPath>ptrace.c</itemPath>
       <itemPath>range.c</itemPath>
       <itemPath>regs.c</itemPath>
       <itemPath>resource.c</itemPath>
-      <itemPath>sim-bpred.c</itemPath>
-      <itemPath>sim-cache.c</itemPath>
-      <itemPath>sim-eio.c</itemPath>
-      <itemPath>sim-fast.c</itemPath>
       <itemPath>sim-outorder.c</itemPath>
-      <itemPath>sim-profile.c</itemPath>
-      <itemPath>sim-safe.c</itemPath>
       <itemPath>stats.c</itemPath>
       <itemPath>symbol.c</itemPath>
+      <itemPath>target-pisa/symbol.c</itemPath>
       <itemPath>syscall.c</itemPath>
+      <itemPath>target-pisa/syscall.c</itemPath>
       <itemPath>sysprobe.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -76,6 +81,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>Makefile</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -87,6 +93,8 @@
       </toolsSet>
       <compileType>
       </compileType>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="bitmap.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bpred.c" ex="false" tool="0" flavor2="0">
@@ -127,6 +135,8 @@
       </item>
       <item path="machine.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="machine.def" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="machine.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
@@ -159,19 +169,7 @@
       </item>
       <item path="resource.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="sim-bpred.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-cache.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-eio.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-fast.c" ex="false" tool="0" flavor2="0">
-      </item>
       <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-profile.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-safe.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="sim.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -188,6 +186,26 @@
       <item path="syscall.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sysprobe.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/configbig.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/configlit.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/ecoff.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/loader.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/pisa.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/pisa.def" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/pisa.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/symbol.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/syscall.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="version.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -212,6 +230,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="Makefile" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="bitmap.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bpred.c" ex="false" tool="0" flavor2="0">
@@ -252,6 +272,8 @@
       </item>
       <item path="machine.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="machine.def" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="machine.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
@@ -284,19 +306,7 @@
       </item>
       <item path="resource.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="sim-bpred.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-cache.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-eio.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-fast.c" ex="false" tool="0" flavor2="0">
-      </item>
       <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-profile.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="sim-safe.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="sim.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -313,6 +323,26 @@
       <item path="syscall.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sysprobe.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/configbig.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/configlit.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/ecoff.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/loader.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/pisa.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/pisa.def" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/pisa.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="target-pisa/symbol.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="target-pisa/syscall.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="version.h" ex="false" tool="3" flavor2="0">
       </item>

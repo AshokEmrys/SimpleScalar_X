@@ -52,17 +52,15 @@ OBJECTFILES= \
 	${OBJECTDIR}/range.o \
 	${OBJECTDIR}/regs.o \
 	${OBJECTDIR}/resource.o \
-	${OBJECTDIR}/sim-bpred.o \
-	${OBJECTDIR}/sim-cache.o \
-	${OBJECTDIR}/sim-eio.o \
-	${OBJECTDIR}/sim-fast.o \
 	${OBJECTDIR}/sim-outorder.o \
-	${OBJECTDIR}/sim-profile.o \
-	${OBJECTDIR}/sim-safe.o \
 	${OBJECTDIR}/stats.o \
 	${OBJECTDIR}/symbol.o \
 	${OBJECTDIR}/syscall.o \
-	${OBJECTDIR}/sysprobe.o
+	${OBJECTDIR}/sysprobe.o \
+	${OBJECTDIR}/target-pisa/loader.o \
+	${OBJECTDIR}/target-pisa/pisa.o \
+	${OBJECTDIR}/target-pisa/symbol.o \
+	${OBJECTDIR}/target-pisa/syscall.o
 
 
 # C Compiler Flags
@@ -174,40 +172,10 @@ ${OBJECTDIR}/resource.o: resource.c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resource.o resource.c
 
-${OBJECTDIR}/sim-bpred.o: sim-bpred.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-bpred.o sim-bpred.c
-
-${OBJECTDIR}/sim-cache.o: sim-cache.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-cache.o sim-cache.c
-
-${OBJECTDIR}/sim-eio.o: sim-eio.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-eio.o sim-eio.c
-
-${OBJECTDIR}/sim-fast.o: sim-fast.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-fast.o sim-fast.c
-
 ${OBJECTDIR}/sim-outorder.o: sim-outorder.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-outorder.o sim-outorder.c
-
-${OBJECTDIR}/sim-profile.o: sim-profile.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-profile.o sim-profile.c
-
-${OBJECTDIR}/sim-safe.o: sim-safe.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-safe.o sim-safe.c
 
 ${OBJECTDIR}/stats.o: stats.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -228,6 +196,26 @@ ${OBJECTDIR}/sysprobe.o: sysprobe.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sysprobe.o sysprobe.c
+
+${OBJECTDIR}/target-pisa/loader.o: target-pisa/loader.c 
+	${MKDIR} -p ${OBJECTDIR}/target-pisa
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/target-pisa/loader.o target-pisa/loader.c
+
+${OBJECTDIR}/target-pisa/pisa.o: target-pisa/pisa.c 
+	${MKDIR} -p ${OBJECTDIR}/target-pisa
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/target-pisa/pisa.o target-pisa/pisa.c
+
+${OBJECTDIR}/target-pisa/symbol.o: target-pisa/symbol.c 
+	${MKDIR} -p ${OBJECTDIR}/target-pisa
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/target-pisa/symbol.o target-pisa/symbol.c
+
+${OBJECTDIR}/target-pisa/syscall.o: target-pisa/syscall.c 
+	${MKDIR} -p ${OBJECTDIR}/target-pisa
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/target-pisa/syscall.o target-pisa/syscall.c
 
 # Subprojects
 .build-subprojects:
