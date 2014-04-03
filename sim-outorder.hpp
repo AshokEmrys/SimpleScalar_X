@@ -30,13 +30,12 @@
 #include <iostream>
 
 
-
 #include "host.h"
 #include "misc.h"
 #include "machine.h"
 #include "regs.h"
 #include "memory.h"
-#include "cache.h"
+
 #include "loader.h"
 #include "syscall.h"
 #include "bpred.h"
@@ -546,6 +545,8 @@ public:
  struct RS_link *event_queue;
  struct RS_link *ready_queue;
  struct CV_link CVLINK_NULL;
+ #define BITMAP_SIZE(BITS)	(((BITS)+31)/32)
+#define BITMAP_TYPE(BITS, NAME)	unsigned int (NAME)[BITMAP_SIZE(BITS)]
  BITMAP_TYPE(MD_TOTAL_REGS, use_spec_cv);
  struct CV_link create_vector[MD_TOTAL_REGS];
  struct CV_link spec_create_vector[MD_TOTAL_REGS];
@@ -778,7 +779,6 @@ sim_main(void);
 
  
 };
-
 
 #endif	/* SIM_OUTRDER_HPP */
 

@@ -74,6 +74,7 @@
 #include "stats.h"
 #include "loader.h"
 #include "sim.h"
+#include "sim-outorder.hpp"
 
 /* stats signal handler */
 static void
@@ -207,19 +208,19 @@ sim_print_stats(FILE *fd)		/* output stream */
   /* print simulation stats */
   fprintf(fd, "\nsim: ** simulation statistics **\n");
   stat_print_stats(sim_sdb, fd);
-  sim_aux_stats(fd);
+  //sim_aux_stats(fd);
   fprintf(fd, "\n");
 }
 
 /* print stats, uninitialize simulator components, and exit w/ exitcode */
 static void
-exit_now(int exit_code)
+exit_now(int exit_code, simoutorder *simobj)
 {
   /* print simulation stats */
   sim_print_stats(stderr);
 
   /* un-initialize the simulator */
-  sim_uninit();
+  simobj->sim_uninit();
 
   /* all done! */
   exit(exit_code);
@@ -230,7 +231,7 @@ main(int argc, char **argv, char **envp)
 {
   char *s;
   int i, exit_code;
-
+simoutorder sim1;
 #ifndef _MSC_VER
   /* catch SIGUSR1 and dump intermediate stats */
   signal(SIGUSR1, signal_sim_stats);
@@ -246,10 +247,10 @@ main(int argc, char **argv, char **envp)
   if ((exit_code = setjmp(sim_exit_buf)) != 0)
     {
       /* special handling as longjmp cannot pass 0 */
-      exit_now(exit_code-1);
+      exit_now(exit_code-1, &sim1);
     }
   
-  simoutorder sim1;
+  
 
   /* register global options */
   sim_odb = opt_new(orphan_fn);
@@ -413,13 +414,13 @@ main(int argc, char **argv, char **envp)
   sim_start_time = time((time_t *)NULL);
 
   if (init_quit)
-    exit_now(0);
+    exit_now(0, &sim1);
 
   running = TRUE;
   sim1.sim_main();
 
   /* simulation finished early */
-  exit_now(0);
+  exit_now(0, &sim1);
 
   return 0;
 }

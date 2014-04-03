@@ -1226,7 +1226,7 @@ dlite_stats(int nargs, union arg_val_t args[],	/* command arguments */
 
   /* print all options */
   stat_print_stats(sim_sdb, stdout);
-  sim_aux_stats(stdout);
+  //sim_aux_stats(stdout);
 
   /* no error */
   return NULL;
@@ -1706,7 +1706,7 @@ set_break(int classM,				/* break classM, use ACCESS_* */
   struct dlite_break_t *bp;
 
   /* add breakpoint to break list */
-  bp = calloc(1, sizeof(struct dlite_break_t));
+  bp = (dlite_break_t*) calloc(1, sizeof(struct dlite_break_t));
   if (!bp)
     fatal("out of virtual memory");
 

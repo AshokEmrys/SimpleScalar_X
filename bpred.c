@@ -77,7 +77,7 @@ bpred_create(enum bpred_class classM,	/* type of predictor to create */
 {
   struct bpred_t *pred;
 
-  if (!(pred = calloc(1, sizeof(struct bpred_t))))
+  if (!(pred = (bpred_t*) calloc(1, sizeof(struct bpred_t))))
     fatal("out of virtual memory");
 
   pred->classM = classM;
@@ -131,7 +131,7 @@ bpred_create(enum bpred_class classM,	/* type of predictor to create */
       if (!btb_assoc || (btb_assoc & (btb_assoc-1)) != 0)
 	fatal("BTB associativity must be non-zero and a power of two");
 
-      if (!(pred->btb.btb_data = calloc(btb_sets * btb_assoc,
+      if (!(pred->btb.btb_data = (bpred_btb_ent_t*) calloc(btb_sets * btb_assoc,
 					sizeof(struct bpred_btb_ent_t))))
 	fatal("cannot allocate BTB");
 
@@ -156,7 +156,7 @@ bpred_create(enum bpred_class classM,	/* type of predictor to create */
       
       pred->retstack.size = retstack_size;
       if (retstack_size)
-	if (!(pred->retstack.stack = calloc(retstack_size, 
+	if (!(pred->retstack.stack = (bpred_btb_ent_t*) calloc(retstack_size, 
 					    sizeof(struct bpred_btb_ent_t))))
 	  fatal("cannot allocate return-address-stack");
       pred->retstack.tos = retstack_size - 1;
@@ -189,7 +189,7 @@ bpred_dir_create (
   unsigned int cnt;
   int flipflop;
 
-  if (!(pred_dir = calloc(1, sizeof(struct bpred_dir_t))))
+  if (!(pred_dir = (bpred_dir_t*)  calloc(1, sizeof(struct bpred_dir_t))))
     fatal("out of virtual memory");
 
   pred_dir->classM = classM;
@@ -214,11 +214,11 @@ bpred_dir_create (
       pred_dir->config.two.shift_width = shift_width;
       
       pred_dir->config.two.xorV = xorV;
-      pred_dir->config.two.shiftregs = calloc(l1size, sizeof(int));
+      pred_dir->config.two.shiftregs = (int*) calloc(l1size, sizeof(int));
       if (!pred_dir->config.two.shiftregs)
 	fatal("cannot allocate shift register table");
       
-      pred_dir->config.two.l2table = calloc(l2size, sizeof(unsigned char));
+      pred_dir->config.two.l2table = (unsigned char*) calloc(l2size, sizeof(unsigned char));
       if (!pred_dir->config.two.l2table)
 	fatal("cannot allocate second level table");
 
@@ -239,7 +239,7 @@ bpred_dir_create (
 	    l1size);
     pred_dir->config.bimod.size = l1size;
     if (!(pred_dir->config.bimod.table =
-	  calloc(l1size, sizeof(unsigned char))))
+	  (unsigned char*) calloc(l1size, sizeof(unsigned char))))
       fatal("cannot allocate 2bit storage");
     /* initialize counters to weakly this-or-that */
     flipflop = 1;

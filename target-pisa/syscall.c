@@ -1811,14 +1811,14 @@ sys_syscall(struct regs_t *regs,	/* registers to access */
 	/* copy target side I/O vector buffers to host memory */
 	for (i=0; i < /*iovcnt*/regs->regs_R[6]; i++)
 	  {
-	    iov[i].iov_base = (char *)MD_SWAPW((unsigned)iov[i].iov_base);
+	    iov[i].iov_base = (char *)MD_SWAPW((unsigned*)(iov[i].iov_base));
 	    iov[i].iov_len = MD_SWAPW(iov[i].iov_len);
 	    if (iov[i].iov_base != NULL)
 	      {
 		buf = (char *)calloc(iov[i].iov_len, sizeof(char));
 		if (!buf)
 		  fatal("out of virtual memory in SYS_writev");
-		mem_bcopy(mem_fn, mem, Read, (md_addr_t)iov[i].iov_base,
+		mem_bcopy(mem_fn, mem, Read, *((md_addr_t*)(iov[i].iov_base)),
 			  buf, iov[i].iov_len);
 		iov[i].iov_base = buf;
 	      }

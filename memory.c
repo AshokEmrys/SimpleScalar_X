@@ -66,7 +66,7 @@ mem_create(char *name)			/* name of the memory space */
 {
   struct mem_t *mem;
 
-  mem = calloc(1, sizeof(struct mem_t));
+  mem = (mem_t*) calloc(1, sizeof(struct mem_t));
   if (!mem)
     fatal("out of virtual memory");
 
@@ -115,12 +115,12 @@ mem_newpage(struct mem_t *mem,		/* memory space to allocate in */
   struct mem_pte_t *pte;
 
   /* see misc.c for details on the getcore() function */
-  page = getcore(MD_PAGE_SIZE);
+  page = (byte_t*) getcore(MD_PAGE_SIZE);
   if (!page)
     fatal("out of virtual memory");
 
   /* generate a new PTE */
-  pte = calloc(1, sizeof(struct mem_pte_t));
+  pte = (mem_pte_t*) calloc(1, sizeof(struct mem_pte_t));
   if (!pte)
     fatal("out of virtual memory");
   pte->tag = MEM_PTAB_TAG(addr);
@@ -144,7 +144,7 @@ mem_access(struct mem_t *mem,		/* memory space to access */
 	   void *vp,			/* host memory address to access */
 	   int nbytes)			/* number of bytes to access */
 {
-  byte_t *p = vp;
+  byte_t *p = (byte_t*) vp;
 
   /* check alignments */
   if (/* check size */(nbytes & (nbytes-1)) != 0
@@ -345,7 +345,7 @@ mem_bcopy(mem_access_fn mem_fn,		/* user-specified memory accessor */
 	  void *vp,			/* host memory address to access */
 	  int nbytes)
 {
-  byte_t *p = vp;
+  byte_t *p = (byte_t*) vp;
   enum md_fault_type fault;
 
   /* copy NBYTES bytes to/from simulator memory */
@@ -371,7 +371,7 @@ mem_bcopy4(mem_access_fn mem_fn,	/* user-specified memory accessor */
 	   void *vp,			/* host memory address to access */
 	   int nbytes)
 {
-  byte_t *p = vp;
+  byte_t *p = (byte_t*) vp;
   int words = nbytes >> 2;		/* note: nbytes % 2 == 0 is assumed */
   enum md_fault_type fault;
 

@@ -447,7 +447,7 @@ ld_load_prog(char *fname,		/* program to load */
 	    ld_text_size = ((shdr.s_vaddr + shdr.s_size) - MD_TEXT_BASE) 
 	      + TEXT_TAIL_PADDING;
 
-	    p = calloc(shdr.s_size, sizeof(char));
+	    p = (char*) calloc(shdr.s_size, sizeof(char));
 	    if (!p)
 	      fatal("out of virtual memory");
 
@@ -497,7 +497,7 @@ ld_load_prog(char *fname,		/* program to load */
 	    Sdata_seek = shdr.s_scnptr;
 #endif
 
-	    p = calloc(shdr.s_size, sizeof(char));
+	    p = (char*) calloc(shdr.s_size, sizeof(char));
 	    if (!p)
 	      fatal("out of virtual memory");
 

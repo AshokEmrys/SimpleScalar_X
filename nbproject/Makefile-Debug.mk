@@ -55,11 +55,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/sim-outorder.o \
 	${OBJECTDIR}/stats.o \
 	${OBJECTDIR}/symbol.o \
-	${OBJECTDIR}/syscall.o \
 	${OBJECTDIR}/sysprobe.o \
-	${OBJECTDIR}/target-pisa/loader.o \
 	${OBJECTDIR}/target-pisa/pisa.o \
-	${OBJECTDIR}/target-pisa/symbol.o \
 	${OBJECTDIR}/target-pisa/syscall.o
 
 
@@ -187,30 +184,15 @@ ${OBJECTDIR}/symbol.o: symbol.c
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/symbol.o symbol.c
 
-${OBJECTDIR}/syscall.o: syscall.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/syscall.o syscall.c
-
 ${OBJECTDIR}/sysprobe.o: sysprobe.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sysprobe.o sysprobe.c
 
-${OBJECTDIR}/target-pisa/loader.o: target-pisa/loader.c 
-	${MKDIR} -p ${OBJECTDIR}/target-pisa
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/target-pisa/loader.o target-pisa/loader.c
-
 ${OBJECTDIR}/target-pisa/pisa.o: target-pisa/pisa.c 
 	${MKDIR} -p ${OBJECTDIR}/target-pisa
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/target-pisa/pisa.o target-pisa/pisa.c
-
-${OBJECTDIR}/target-pisa/symbol.o: target-pisa/symbol.c 
-	${MKDIR} -p ${OBJECTDIR}/target-pisa
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/target-pisa/symbol.o target-pisa/symbol.c
 
 ${OBJECTDIR}/target-pisa/syscall.o: target-pisa/syscall.c 
 	${MKDIR} -p ${OBJECTDIR}/target-pisa

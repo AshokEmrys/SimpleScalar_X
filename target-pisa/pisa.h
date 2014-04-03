@@ -223,7 +223,7 @@ extern md_inst_t MD_NOP_INST;
 
 /* returns the opcode field value of SimpleScalar instruction INST */
 #define MD_OPFIELD(INST)		(INST.a & 0xff)
-#define MD_SET_OPCODE(OP, INST)	((OP) = ((INST).a & 0xff))
+#define MD_SET_OPCODE(OP, INST)	((OP) = (enum md_opcode)((INST).a & 0xff))
 
 /* largest opcode field value (currently upper 8-bit are used for pre/post-
    incr/decr operation specifiers */
@@ -551,13 +551,13 @@ extern char *md_amode_str[md_amode_NUM];
  * configure the EXO package
  */
 
-/* EXO pointer classM */
+/* EXO pointer class */
 typedef qword_t exo_address_t;
 
-/* EXO integer classM, 64-bit encoding */
+/* EXO integer class, 64-bit encoding */
 typedef qword_t exo_integer_t;
 
-/* EXO floating point classM, 64-bit encoding */
+/* EXO floating point class, 64-bit encoding */
 typedef double exo_float_t;
 
 
@@ -634,7 +634,7 @@ void md_print_cregs(md_ctrl_t regs, FILE *stream);
 /* compute CRC of all registers */
 word_t md_crc_regs(struct regs_t *regs);
 
-/* xorV checksum registers */
+/* xor checksum registers */
 word_t md_xor_regs(struct regs_t *regs);
 
 

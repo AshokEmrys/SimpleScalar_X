@@ -31,6 +31,7 @@
       <itemPath>regs.h</itemPath>
       <itemPath>resource.h</itemPath>
       <itemPath>sim-outorder.hpp</itemPath>
+      <itemPath>sim-outorder1.hpp</itemPath>
       <itemPath>sim.h</itemPath>
       <itemPath>stats.h</itemPath>
       <itemPath>symbol.h</itemPath>
@@ -52,7 +53,6 @@
       <itemPath>eval.c</itemPath>
       <itemPath>eventq.c</itemPath>
       <itemPath>loader.c</itemPath>
-      <itemPath>target-pisa/loader.c</itemPath>
       <itemPath>machine.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>memory.c</itemPath>
@@ -66,8 +66,6 @@
       <itemPath>sim-outorder.cpp</itemPath>
       <itemPath>stats.c</itemPath>
       <itemPath>symbol.c</itemPath>
-      <itemPath>target-pisa/symbol.c</itemPath>
-      <itemPath>syscall.c</itemPath>
       <itemPath>target-pisa/syscall.c</itemPath>
       <itemPath>sysprobe.c</itemPath>
     </logicalFolder>
@@ -174,6 +172,8 @@
       </item>
       <item path="sim-outorder.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="sim-outorder1.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="sim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="stats.c" ex="false" tool="0" flavor2="0">
@@ -183,8 +183,6 @@
       <item path="symbol.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="symbol.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="syscall.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="syscall.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -198,15 +196,11 @@
       </item>
       <item path="target-pisa/ecoff.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="target-pisa/loader.c" ex="false" tool="0" flavor2="0">
-      </item>
       <item path="target-pisa/pisa.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="target-pisa/pisa.def" ex="false" tool="3" flavor2="0">
       </item>
       <item path="target-pisa/pisa.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="target-pisa/symbol.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="target-pisa/syscall.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -313,6 +307,8 @@
       </item>
       <item path="sim-outorder.hpp" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="sim-outorder1.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="sim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="stats.c" ex="false" tool="0" flavor2="0">
@@ -322,8 +318,6 @@
       <item path="symbol.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="symbol.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="syscall.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="syscall.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -337,15 +331,11 @@
       </item>
       <item path="target-pisa/ecoff.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="target-pisa/loader.c" ex="false" tool="0" flavor2="0">
-      </item>
       <item path="target-pisa/pisa.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="target-pisa/pisa.def" ex="false" tool="3" flavor2="0">
       </item>
       <item path="target-pisa/pisa.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="target-pisa/symbol.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="target-pisa/syscall.c" ex="false" tool="0" flavor2="0">
       </item>

@@ -57,7 +57,7 @@
 #include "misc.h"
 #include "machine.h"
 #include "cache.h"
-
+#include "sim-outorder1.hpp"
 /* cache access macros */
 #define CACHE_TAG(cp, addr)	((addr) >> (cp)->tag_shift)
 #define CACHE_SET(cp, addr)	(((addr) >> (cp)->set_shift) & (cp)->set_mask)
@@ -266,7 +266,8 @@ cache_create(char *name,		/* name of the cache */
 	     int assoc,			/* associativity of cache */
 	     enum cache_policy policy,	/* replacement policy w/in sets */
 	     /* block access function, see description w/in struct cache def */
-	     unsigned int (*blk_access_fn)(enum mem_cmd cmd,
+       simoutorder *in_simobject,
+	     unsigned int (simoutorder::*blk_access_fn)(enum mem_cmd cmd,
 					   md_addr_t baddr, int bsize,
 					   struct cache_blk_t *blk,
 					   tick_t now),
@@ -312,6 +313,7 @@ cache_create(char *name,		/* name of the cache */
   cp->hit_latency = hit_latency;
 
   /* miss/replacement functions */
+  cp->ptrSimObject = in_simobject;
   cp->blk_access_fn = blk_access_fn;
 
   /* compute derived parameters */
@@ -506,7 +508,7 @@ cache_access(struct cache_t *cp,	/* cache to access */
 	     byte_t **udata,		/* for return of user data ptr */
 	     md_addr_t *repl_addr)	/* for address of replaced block */
 {
-  byte_t *p = vp;
+  byte_t *p = (byte_t*) vp;
   md_addr_t tag = CACHE_TAG(cp, addr);
   md_addr_t set = CACHE_SET(cp, addr);
   md_addr_t bofs = CACHE_BLK(cp, addr);
@@ -614,7 +616,7 @@ cache_access(struct cache_t *cp,	/* cache to access */
 	{
 	  /* write back the cache block */
 	  cp->writebacks++;
-	  lat += cp->blk_access_fn(Write,
+	  lat += ((cp->ptrSimObject)->*(cp->blk_access_fn))(Write,
 				   CACHE_MK_BADDR(cp, repl->tag, set),
 				   cp->bsize, repl, now+lat);
 	}
@@ -625,7 +627,7 @@ cache_access(struct cache_t *cp,	/* cache to access */
   repl->status = CACHE_BLK_VALID;	/* dirty bit set on update */
 
   /* read data block */
-  lat += cp->blk_access_fn(Read, CACHE_BADDR(cp, addr), cp->bsize,
+  lat += ((cp->ptrSimObject)->*(cp->blk_access_fn))(Read, CACHE_BADDR(cp, addr), cp->bsize,
 			   repl, now+lat);
 
   /* copy data out of cache block */
@@ -787,7 +789,7 @@ cache_flush(struct cache_t *cp,		/* cache instance to flush */
 		{
 		  /* write back the invalidated block */
           	  cp->writebacks++;
-		  lat += cp->blk_access_fn(Write,
+		  lat += ((cp->ptrSimObject)->*(cp->blk_access_fn))(Write,
 					   CACHE_MK_BADDR(cp, blk->tag, i),
 					   cp->bsize, blk, now+lat);
 		}
@@ -849,7 +851,7 @@ cache_flush_addr(struct cache_t *cp,	/* cache instance to flush */
 	{
 	  /* write back the invalidated block */
           cp->writebacks++;
-	  lat += cp->blk_access_fn(Write,
+	  lat += ((cp->ptrSimObject)->*(cp->blk_access_fn))(Write,
 				   CACHE_MK_BADDR(cp, blk->tag, set),
 				   cp->bsize, blk, now+lat);
 	}

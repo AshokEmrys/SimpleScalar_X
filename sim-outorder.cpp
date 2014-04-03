@@ -17,7 +17,7 @@
  * =====================================================================================
  */
 
-#include "sim-outorder.hpp"
+#include "cache.h"
 
 /*Sim Outorder classM Definition*/
 
@@ -522,8 +522,8 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
 		 name, &nsets, &bsize, &assoc, &c) != 5)
 	fatal("bad l1 D-cache parms: <name>:<nsets>:<bsize>:<assoc>:<repl>");
       cache_dl1 = cache_create(name, nsets, bsize, FALSE,
-			       0, assoc, cache_char2policy(c),
-			       dl1_access_fn, cache_dl1_lat);
+			       0, assoc, cache_char2policy(c), this,
+			       &simoutorder::dl1_access_fn, cache_dl1_lat);
       if (!mystricmp(cache_dl2_opt, "none"))
 	cache_dl2 = NULL;
       else
@@ -533,8 +533,8 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
 	    fatal("bad l2 D-cache parms: "
 		  "<name>:<nsets>:<bsize>:<assoc>:<repl>");
 	  cache_dl2 = cache_create(name, nsets, bsize, FALSE,
-				   0, assoc, cache_char2policy(c),
-				   dl2_access_fn, cache_dl2_lat);
+				   0, assoc, cache_char2policy(c), this,
+				   &simoutorder::dl2_access_fn, cache_dl2_lat);
 	}
     }
   if (!mystricmp(cache_il1_opt, "none"))
@@ -568,8 +568,8 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
 		 name, &nsets, &bsize, &assoc, &c) != 5)
 	fatal("bad l1 I-cache parms: <name>:<nsets>:<bsize>:<assoc>:<repl>");
       cache_il1 = cache_create(name, nsets, bsize, FALSE,
-			       0, assoc, cache_char2policy(c),
-			       il1_access_fn, cache_il1_lat);
+			       0, assoc, cache_char2policy(c), this,
+			       &simoutorder::il1_access_fn, cache_il1_lat);
       if (!mystricmp(cache_il2_opt, "none"))
 	cache_il2 = NULL;
       else if (!mystricmp(cache_il2_opt, "dl2"))
@@ -585,8 +585,8 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
 	    fatal("bad l2 I-cache parms: "
 		  "<name>:<nsets>:<bsize>:<assoc>:<repl>");
 	  cache_il2 = cache_create(name, nsets, bsize, FALSE,
-				   0, assoc, cache_char2policy(c),
-				   il2_access_fn, cache_il2_lat);
+				   0, assoc, cache_char2policy(c), this,
+				   &simoutorder::il2_access_fn, cache_il2_lat);
 	}
     }
   if (!mystricmp(itlb_opt, "none"))
@@ -598,7 +598,7 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
 	fatal("bad TLB parms: <name>:<nsets>:<page_size>:<assoc>:<repl>");
       itlb = cache_create(name, nsets, bsize, FALSE,
 			  sizeof(md_addr_t), assoc,
-			  cache_char2policy(c), itlb_access_fn,
+			  cache_char2policy(c), this, &simoutorder::itlb_access_fn,
 			  1);
     }
   if (!mystricmp(dtlb_opt, "none"))
@@ -610,7 +610,7 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
 	fatal("bad TLB parms: <name>:<nsets>:<page_size>:<assoc>:<repl>");
       dtlb = cache_create(name, nsets, bsize, FALSE,
 			  sizeof(md_addr_t), assoc,
-			  cache_char2policy(c), dtlb_access_fn,
+			  cache_char2policy(c), this, &simoutorder::dtlb_access_fn,
 			  1);
     }
   if (cache_dl1_lat < 1)
@@ -835,7 +835,7 @@ simoutorder::sim_load_prog(char *fname,
   readyq_init();
   ruu_init();
   lsq_init();
-  dlite_init(simoo_reg_obj, simoo_mem_obj, simoo_mstate_obj);
+  //dlite_init(simoo_reg_obj, simoo_mem_obj, simoo_mstate_obj);
 }
 
 void

@@ -59,7 +59,7 @@
 #include "machine.h"
 #include "memory.h"
 #include "stats.h"
-
+#include "sim-outorder1.hpp"
 /*
  * This module contains code to implement various cache-like structures.  The
  * user instantiates caches using cache_new().  When instantiated, the user
@@ -167,12 +167,12 @@ struct cache_t
      responsible for generating any user data and incorporating the latency
      of that operation */
   unsigned int					/* latency of block access */
-    (*blk_access_fn)(enum mem_cmd cmd,		/* block access command */
+    (simoutorder::*blk_access_fn)(enum mem_cmd cmd,		/* block access command */
 		     md_addr_t baddr,		/* program address to access */
 		     int bsize,			/* size of the cache block */
 		     struct cache_blk_t *blk,	/* ptr to cache block struct */
 		     tick_t now);		/* when fetch was initiated */
-
+  simoutorder* ptrSimObject;
   /* derived data, for fast decoding */
   int hsize;			/* cache set hash table size */
   md_addr_t blk_mask;
@@ -221,7 +221,8 @@ cache_create(char *name,		/* name of the cache */
 	     int assoc,			/* associativity of cache */
 	     enum cache_policy policy,	/* replacement policy w/in sets */
 	     /* block access function, see description w/in struct cache def */
-	     unsigned int (*blk_access_fn)(enum mem_cmd cmd,
+       simoutorder *in_simobject,
+	     unsigned int (simoutorder::*blk_access_fn)(enum mem_cmd cmd,
 					   md_addr_t baddr, int bsize,
 					   struct cache_blk_t *blk,
 					   tick_t now),
