@@ -84,9 +84,11 @@ extern int sim_elapsed_time;
 
 /* options database */
 extern struct opt_odb_t *sim_odb;
+extern struct opt_odb_t *sim_odb2;
 
 /* stats database */
 extern struct stat_sdb_t *sim_sdb;
+extern struct stat_sdb_t *sim_sdb2;
 
 /* EIO interfaces */
 extern char *sim_eio_fname;

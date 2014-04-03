@@ -71,7 +71,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=src/libexo/libexo.a -lm
+LDLIBSOPTIONS=src/libexo/libexo.a -lm -lpthread
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

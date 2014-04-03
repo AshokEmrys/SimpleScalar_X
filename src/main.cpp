@@ -59,6 +59,7 @@
 #ifndef _MSC_VER
 #include <unistd.h>
 #include <sys/time.h>
+#include <thread>
 #endif
 #ifdef BFD_LOADER
 #include <bfd.h>
@@ -118,10 +119,10 @@ int sim_dump_stats = FALSE;
 
 /* options database */
 struct opt_odb_t *sim_odb;
-
+struct opt_odb_t *sim_odb2;
 /* stats database */
 struct stat_sdb_t *sim_sdb;
-
+struct stat_sdb_t *sim_sdb2;
 /* EIO interfaces */
 char *sim_eio_fname = NULL;
 char *sim_chkpt_fname = NULL;
@@ -225,77 +226,51 @@ exit_now(int exit_code, simoutorder *simobj)
   /* all done! */
   exit(exit_code);
 }
-
-int
-main(int argc, char **argv, char **envp)
+int init(struct stat_sdb_t* &in_statdb, 
+         struct opt_odb_t* &in_optdb,
+         simoutorder* in_simobj,
+         int argc,
+         char** argv,
+         char **envp
+         )
 {
-  char *s;
-  int i, exit_code;
-simoutorder sim1;
-#ifndef _MSC_VER
-  /* catch SIGUSR1 and dump intermediate stats */
-  signal(SIGUSR1, signal_sim_stats);
-
-  /* catch SIGUSR2 and dump final stats and exit */
-  signal(SIGUSR2, signal_exit_now);
-#endif /* _MSC_VER */
-
-  /* register an error handler */
-  fatal_hook(sim_print_stats);
-
-  /* set up a non-local exit point */
-  if ((exit_code = setjmp(sim_exit_buf)) != 0)
-    {
-      /* special handling as longjmp cannot pass 0 */
-      exit_now(exit_code-1, &sim1);
-    }
-  
-  
-
-  /* register global options */
-  sim_odb = opt_new(orphan_fn);
-  opt_reg_flag(sim_odb, "-h", "print help message",
+in_optdb = opt_new(orphan_fn);
+opt_reg_flag(in_optdb, "-h", "print help message",
 	       &help_me, /* default */FALSE, /* !print */FALSE, NULL);
-  opt_reg_flag(sim_odb, "-v", "verbose operation",
+  opt_reg_flag(in_optdb, "-v", "verbose operation",
 	       &verbose, /* default */FALSE, /* !print */FALSE, NULL);
 #ifdef DEBUG
-  opt_reg_flag(sim_odb, "-d", "enable debug message",
+  opt_reg_flag(in_optdb, "-d", "enable debug message",
 	       &debugging, /* default */FALSE, /* !print */FALSE, NULL);
 #endif /* DEBUG */
-  opt_reg_flag(sim_odb, "-i", "start in Dlite debugger",
+  opt_reg_flag(in_optdb, "-i", "start in Dlite debugger",
 	       &dlite_active, /* default */FALSE, /* !print */FALSE, NULL);
-  opt_reg_int(sim_odb, "-seed",
+  opt_reg_int(in_optdb, "-seed",
 	      "random number generator seed (0 for timer seed)",
 	      &rand_seed, /* default */1, /* print */TRUE, NULL);
-  opt_reg_flag(sim_odb, "-q", "initialize and terminate immediately",
+  opt_reg_flag(in_optdb, "-q", "initialize and terminate immediately",
 	       &init_quit, /* default */FALSE, /* !print */FALSE, NULL);
-  opt_reg_string(sim_odb, "-chkpt", "restore EIO trace execution from <fname>",
+  opt_reg_string(in_optdb, "-chkpt", "restore EIO trace execution from <fname>",
 		 &sim_chkpt_fname, /* default */NULL, /* !print */FALSE, NULL);
 
   /* stdio redirection options */
-  opt_reg_string(sim_odb, "-redir:sim",
+  opt_reg_string(in_optdb, "-redir:sim",
 		 "redirect simulator output to file (non-interactive only)",
 		 &sim_simout,
 		 /* default */NULL, /* !print */FALSE, NULL);
-  opt_reg_string(sim_odb, "-redir:prog",
+  opt_reg_string(in_optdb, "-redir:prog",
 		 "redirect simulated program output to file",
 		 &sim_progout, /* default */NULL, /* !print */FALSE, NULL);
-
-#ifndef _MSC_VER
+  #ifndef _MSC_VER
   /* scheduling priority option */
-  opt_reg_int(sim_odb, "-nice",
+  opt_reg_int(in_optdb, "-nice",
 	      "simulator scheduling priority", &nice_priority,
 	      /* default */NICE_DEFAULT_VALUE, /* print */TRUE, NULL);
 #endif
+in_simobj->sim_reg_options(in_optdb);
 
-  /* FIXME: add stats intervals and max insts... */
-
-  /* register all simulator-specific options */
-  sim1.sim_reg_options(sim_odb);
-
-  /* parse simulator options */
-  exec_index = -1;
-  opt_process_options(sim_odb, argc, argv);
+exec_index = -1;
+  opt_process_options(in_optdb, argc, argv);
 
   /* redirect I/O? */
   if (sim_simout != NULL)
@@ -321,10 +296,7 @@ simoutorder sim1;
       usage(stderr, argc, argv);
       exit(1);
     }
-
-  /* opening banner */
-  banner(stderr, argc, argv);
-
+  
   if (help_me)
     {
       /* print help message and exit */
@@ -355,7 +327,7 @@ simoutorder sim1;
   /* else, exec_index points to simulated program arguments */
 
   /* check simulator-specific options */
-  sim1.sim_check_options(sim_odb, argc, argv);
+  in_simobj->sim_check_options(in_optdb, argc, argv);
 
 #ifndef _MSC_VER
   /* set simulator scheduling priority */
@@ -374,23 +346,68 @@ simoutorder sim1;
   bfd_init();
 #endif /* BFD_LOADER */
 
+
+
+  /* initialize all simulation modules */
+  in_simobj->sim_init();
+
+  /* initialize architected state */
+  in_simobj->sim_load_prog(argv[exec_index], argc-exec_index, argv+exec_index, envp);
+ 
+  /* register all simulator stats */
+  in_statdb = stat_new();
+  in_simobj->sim_reg_stats(in_statdb);
+  
+  return 1;
+  
+}
+int
+main(int argc, char **argv, char **envp)
+{
+  char *s;
+  int i, exit_code;
+simoutorder sim1, sim2;
+#ifndef _MSC_VER
+  /* catch SIGUSR1 and dump intermediate stats */
+  signal(SIGUSR1, signal_sim_stats);
+
+  /* catch SIGUSR2 and dump final stats and exit */
+  signal(SIGUSR2, signal_exit_now);
+#endif /* _MSC_VER */
+
+  /* register an error handler */
+  fatal_hook(sim_print_stats);
+
+  /* set up a non-local exit point */
+  if ((exit_code = setjmp(sim_exit_buf)) != 0)
+    {
+      /* special handling as longjmp cannot pass 0 */
+      exit_now(exit_code-1, &sim1);
+    }
+  
+  
+
+  banner(stderr, argc, argv);
+
+ 
+
+  sim_num_insn = 0;
+
+#ifdef BFD_LOADER
+  /* initialize the bfd library */
+  bfd_init();
+#endif /* BFD_LOADER */
+
   /* initialize the instruction decoder */
   md_init_decoder();
 
-  /* initialize all simulation modules */
-  sim1.sim_init();
-
-  /* initialize architected state */
-  sim1.sim_load_prog(argv[exec_index], argc-exec_index, argv+exec_index, envp);
-
-  /* register all simulator stats */
-  sim_sdb = stat_new();
-  sim1.sim_reg_stats(sim_sdb);
-#if 0 /* not portable... :-( */
-  stat_reg_uint(sim_sdb, "sim_mem_usage",
-		"total simulator (data) memory usage",
-		&sim_mem_usage, sim_mem_usage, "%11dk");
-#endif
+  init(sim_sdb, 
+         sim_odb,
+         &sim1,
+         argc,
+         argv,
+         envp
+         );
 
   /* record start of execution time, used in rate stats */
   sim_start_time = time((time_t *)NULL);
@@ -417,6 +434,7 @@ simoutorder sim1;
     exit_now(0, &sim1);
 
   running = TRUE;
+ 
   sim1.sim_main();
 
   /* simulation finished early */

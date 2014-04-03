@@ -94,6 +94,7 @@
           <linkerLibItems>
             <linkerLibFileItem>src/libexo/libexo.a</linkerLibFileItem>
             <linkerLibLibItem>m</linkerLibLibItem>
+            <linkerLibLibItem>pthread</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
