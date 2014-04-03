@@ -64,13 +64,13 @@
 
 /* create a branch predictor */
 struct bpred_t *			/* branch predictory instance */
-bpred_create(enum bpred_class class,	/* type of predictor to create */
+bpred_create(enum bpred_class classM,	/* type of predictor to create */
 	     unsigned int bimod_size,	/* bimod table size */
 	     unsigned int l1size,	/* 2lev l1 table size */
 	     unsigned int l2size,	/* 2lev l2 table size */
 	     unsigned int meta_size,	/* meta table size */
 	     unsigned int shift_width,	/* history register width */
-	     unsigned int xor,  	/* history xor address flag */
+	     unsigned int xorV,  	/* history xorV address flag */
 	     unsigned int btb_sets,	/* number of sets in BTB */ 
 	     unsigned int btb_assoc,	/* BTB associativity */
 	     unsigned int retstack_size) /* num entries in ret-addr stack */
@@ -80,9 +80,9 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
   if (!(pred = calloc(1, sizeof(struct bpred_t))))
     fatal("out of virtual memory");
 
-  pred->class = class;
+  pred->classM = classM;
 
-  switch (class) {
+  switch (classM) {
   case BPredComb:
     /* bimodal component */
     pred->dirpred.bimod = 
@@ -90,7 +90,7 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
 
     /* 2-level component */
     pred->dirpred.twolev = 
-      bpred_dir_create(BPred2Level, l1size, l2size, shift_width, xor);
+      bpred_dir_create(BPred2Level, l1size, l2size, shift_width, xorV);
 
     /* metapredictor component */
     pred->dirpred.meta = 
@@ -100,13 +100,13 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
 
   case BPred2Level:
     pred->dirpred.twolev = 
-      bpred_dir_create(class, l1size, l2size, shift_width, xor);
+      bpred_dir_create(classM, l1size, l2size, shift_width, xorV);
 
     break;
 
   case BPred2bit:
     pred->dirpred.bimod = 
-      bpred_dir_create(class, bimod_size, 0, 0, 0);
+      bpred_dir_create(classM, bimod_size, 0, 0, 0);
 
   case BPredTaken:
   case BPredNotTaken:
@@ -114,11 +114,11 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
     break;
 
   default:
-    panic("bogus predictor class");
+    panic("bogus predictor classM");
   }
 
   /* allocate ret-addr stack */
-  switch (class) {
+  switch (classM) {
   case BPredComb:
   case BPred2Level:
   case BPred2bit:
@@ -170,7 +170,7 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
     break;
 
   default:
-    panic("bogus predictor class");
+    panic("bogus predictor classM");
   }
 
   return pred;
@@ -179,11 +179,11 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
 /* create a branch direction predictor */
 struct bpred_dir_t *		/* branch direction predictor instance */
 bpred_dir_create (
-  enum bpred_class class,	/* type of predictor to create */
+  enum bpred_class classM,	/* type of predictor to create */
   unsigned int l1size,	 	/* level-1 table size */
   unsigned int l2size,	 	/* level-2 table size (if relevant) */
   unsigned int shift_width,	/* history register width */
-  unsigned int xor)	    	/* history xor address flag */
+  unsigned int xorV)	    	/* history xorV address flag */
 {
   struct bpred_dir_t *pred_dir;
   unsigned int cnt;
@@ -192,10 +192,10 @@ bpred_dir_create (
   if (!(pred_dir = calloc(1, sizeof(struct bpred_dir_t))))
     fatal("out of virtual memory");
 
-  pred_dir->class = class;
+  pred_dir->classM = classM;
 
   cnt = -1;
-  switch (class) {
+  switch (classM) {
   case BPred2Level:
     {
       if (!l1size || (l1size & (l1size-1)) != 0)
@@ -213,7 +213,7 @@ bpred_dir_create (
 	      shift_width);
       pred_dir->config.two.shift_width = shift_width;
       
-      pred_dir->config.two.xor = xor;
+      pred_dir->config.two.xorV = xorV;
       pred_dir->config.two.shiftregs = calloc(l1size, sizeof(int));
       if (!pred_dir->config.two.shiftregs)
 	fatal("cannot allocate shift register table");
@@ -257,7 +257,7 @@ bpred_dir_create (
     break;
 
   default:
-    panic("bogus branch direction predictor class");
+    panic("bogus branch direction predictor classM");
   }
 
   return pred_dir;
@@ -270,12 +270,12 @@ bpred_dir_config(
   char name[],			/* predictor name */
   FILE *stream)			/* output stream */
 {
-  switch (pred_dir->class) {
+  switch (pred_dir->classM) {
   case BPred2Level:
     fprintf(stream,
-      "pred_dir: %s: 2-lvl: %d l1-sz, %d bits/ent, %s xor, %d l2-sz, direct-mapped\n",
+      "pred_dir: %s: 2-lvl: %d l1-sz, %d bits/ent, %s xorV, %d l2-sz, direct-mapped\n",
       name, pred_dir->config.two.l1size, pred_dir->config.two.shift_width,
-      pred_dir->config.two.xor ? "" : "no", pred_dir->config.two.l2size);
+      pred_dir->config.two.xorV ? "" : "no", pred_dir->config.two.l2size);
     break;
 
   case BPred2bit:
@@ -292,7 +292,7 @@ bpred_dir_config(
     break;
 
   default:
-    panic("bogus branch direction predictor class");
+    panic("bogus branch direction predictor classM");
   }
 }
 
@@ -301,7 +301,7 @@ void
 bpred_config(struct bpred_t *pred,	/* branch predictor instance */
 	     FILE *stream)		/* output stream */
 {
-  switch (pred->class) {
+  switch (pred->classM) {
   case BPredComb:
     bpred_dir_config (pred->dirpred.bimod, "bimod", stream);
     bpred_dir_config (pred->dirpred.twolev, "2lev", stream);
@@ -333,7 +333,7 @@ bpred_config(struct bpred_t *pred,	/* branch predictor instance */
     break;
 
   default:
-    panic("bogus branch predictor class");
+    panic("bogus branch predictor classM");
   }
 }
 
@@ -356,7 +356,7 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
   char buf[512], buf1[512], *name;
 
   /* get a name for this predictor */
-  switch (pred->class)
+  switch (pred->classM)
     {
     case BPredComb:
       name = "bpred_comb";
@@ -374,7 +374,7 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
       name = "bpred_nottaken";
       break;
     default:
-      panic("bogus branch predictor class");
+      panic("bogus branch predictor classM");
     }
 
   sprintf(buf, "%s.lookups", name);
@@ -391,7 +391,7 @@ bpred_reg_stats(struct bpred_t *pred,	/* branch predictor instance */
 		   "total number of direction-predicted hits "
 		   "(includes addr-hits)", 
 		   &pred->dir_hits, 0, NULL);
-  if (pred->class == BPredComb)
+  if (pred->classM == BPredComb)
     {
       sprintf(buf, "%s.used_bimod", name);
       stat_reg_counter(sdb, buf, 
@@ -495,7 +495,7 @@ bpred_dir_lookup(struct bpred_dir_t *pred_dir,	/* branch dir predictor inst */
   unsigned char *p = NULL;
 
   /* Except for jumps, get a pointer to direction-prediction bits */
-  switch (pred_dir->class) {
+  switch (pred_dir->classM) {
     case BPred2Level:
       {
 	int l1index, l2index;
@@ -503,11 +503,11 @@ bpred_dir_lookup(struct bpred_dir_t *pred_dir,	/* branch dir predictor inst */
         /* traverse 2-level tables */
         l1index = (baddr >> MD_BR_SHIFT) & (pred_dir->config.two.l1size - 1);
         l2index = pred_dir->config.two.shiftregs[l1index];
-        if (pred_dir->config.two.xor)
+        if (pred_dir->config.two.xorV)
 	  {
 #if 1
 	    /* this L2 index computation is more "compatible" to McFarling's
-	       verison of it, i.e., if the PC xor address component is only
+	       verison of it, i.e., if the PC xorV address component is only
 	       part of the index, take the lower order address bits for the
 	       other part of the index, rather than the higher order ones */
 	    l2index = (((l2index ^ (baddr >> MD_BR_SHIFT))
@@ -537,7 +537,7 @@ bpred_dir_lookup(struct bpred_dir_t *pred_dir,	/* branch dir predictor inst */
     case BPredNotTaken:
       break;
     default:
-      panic("bogus branch direction predictor class");
+      panic("bogus branch direction predictor classM");
     }
 
   return (char *)p;
@@ -578,7 +578,7 @@ bpred_lookup(struct bpred_t *pred,	/* branch predictor instance */
   dir_update_ptr->pdir2 = NULL;
   dir_update_ptr->pmeta = NULL;
   /* Except for jumps, get a pointer to direction-prediction bits */
-  switch (pred->class) {
+  switch (pred->classM) {
     case BPredComb:
       if ((MD_OP_FLAGS(op) & (F_CTRL|F_UNCOND)) != (F_CTRL|F_UNCOND))
 	{
@@ -628,7 +628,7 @@ bpred_lookup(struct bpred_t *pred,	/* branch predictor instance */
 	  return btarget;
 	}
     default:
-      panic("bogus predictor class");
+      panic("bogus predictor classM");
   }
 
   /*
@@ -805,7 +805,7 @@ bpred_update(struct bpred_t *pred,	/* branch predictor instance */
     }
 
   /* Can exit now if this is a stateless predictor */
-  if (pred->class == BPredNotTaken || pred->class == BPredTaken)
+  if (pred->classM == BPredNotTaken || pred->classM == BPredTaken)
     return;
 
   /* 
@@ -827,7 +827,7 @@ bpred_update(struct bpred_t *pred,	/* branch predictor instance */
   /* update L1 table if appropriate */
   /* L1 table is updated unconditionally for combining predictor too */
   if ((MD_OP_FLAGS(op) & (F_CTRL|F_UNCOND)) != (F_CTRL|F_UNCOND) &&
-      (pred->class == BPred2Level || pred->class == BPredComb))
+      (pred->classM == BPred2Level || pred->classM == BPredComb))
     {
       int l1index, shift_reg;
       

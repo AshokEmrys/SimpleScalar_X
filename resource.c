@@ -86,7 +86,7 @@ res_create_pool(char *name, struct res_desc *pool, int ndesc)
 	  inst_pool[index] = pool[i];
 	  inst_pool[index].quantity = 1;
 	  inst_pool[index].busy = FALSE;
-	  for (k=0; k<MAX_RES_CLASSES && inst_pool[index].x[k].class; k++)
+	  for (k=0; k<MAX_RES_CLASSES && inst_pool[index].x[k].classM; k++)
 	    inst_pool[index].x[k].master = &inst_pool[index];
 	  index++;
 	}
@@ -108,10 +108,10 @@ res_create_pool(char *name, struct res_desc *pool, int ndesc)
       for (j=0; j<MAX_RES_CLASSES; j++)
 	{
 	  plate = &res->resources[i].x[j];
-	  if (plate->class)
+	  if (plate->classM)
 	    {
-	      assert(plate->class < MAX_RES_CLASSES);
-	      res->table[plate->class][res->nents[plate->class]++] = plate;
+	      assert(plate->classM < MAX_RES_CLASSES);
+	      res->table[plate->classM][res->nents[plate->classM]++] = plate;
 	    }
 	  else
 	    /* all done with this instance */
@@ -123,28 +123,28 @@ res_create_pool(char *name, struct res_desc *pool, int ndesc)
 }
 
 /* get a free resource from resource pool POOL that can execute a
-   operation of class CLASS, returns a pointer to the resource template,
+   operation of classM classM, returns a pointer to the resource template,
    returns NULL, if there are currently no free resources available,
    follow the MASTER link to the master resource descriptor;
    NOTE: caller is responsible for reseting the busy flag in the beginning
    of the cycle when the resource can once again accept a new operation */
 struct res_template *
-res_get(struct res_pool *pool, int class)
+res_get(struct res_pool *pool, int classM)
 {
   int i;
 
-  /* must be a valid class */
-  assert(class < MAX_RES_CLASSES);
+  /* must be a valid classM */
+  assert(classM < MAX_RES_CLASSES);
 
-  /* must be at least one resource in this class */
-  assert(pool->table[class][0]);
+  /* must be at least one resource in this classM */
+  assert(pool->table[classM][0]);
 
   for (i=0; i<MAX_INSTS_PER_CLASS; i++)
     {
-      if (pool->table[class][i])
+      if (pool->table[classM][i])
 	{
-	  if (!pool->table[class][i]->master->busy)
-	    return pool->table[class][i];
+	  if (!pool->table[classM][i]->master->busy)
+	    return pool->table[classM][i];
 	}
       else
 	break;

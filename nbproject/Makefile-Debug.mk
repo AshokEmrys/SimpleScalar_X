@@ -53,7 +53,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/regs.o \
 	${OBJECTDIR}/resource.o \
 	${OBJECTDIR}/sim-outorder.o \
-	${OBJECTDIR}/sim-outorder.o \
 	${OBJECTDIR}/stats.o \
 	${OBJECTDIR}/symbol.o \
 	${OBJECTDIR}/syscall.o \
@@ -172,11 +171,6 @@ ${OBJECTDIR}/resource.o: resource.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resource.o resource.c
-
-${OBJECTDIR}/sim-outorder.o: sim-outorder.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sim-outorder.o sim-outorder.c
 
 ${OBJECTDIR}/sim-outorder.o: sim-outorder.cpp 
 	${MKDIR} -p ${OBJECTDIR}

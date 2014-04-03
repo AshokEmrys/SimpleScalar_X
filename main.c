@@ -248,6 +248,8 @@ main(int argc, char **argv, char **envp)
       /* special handling as longjmp cannot pass 0 */
       exit_now(exit_code-1);
     }
+  
+  simoutorder sim1;
 
   /* register global options */
   sim_odb = opt_new(orphan_fn);
@@ -288,7 +290,7 @@ main(int argc, char **argv, char **envp)
   /* FIXME: add stats intervals and max insts... */
 
   /* register all simulator-specific options */
-  sim_reg_options(sim_odb);
+  sim1.sim_reg_options(sim_odb);
 
   /* parse simulator options */
   exec_index = -1;
@@ -352,7 +354,7 @@ main(int argc, char **argv, char **envp)
   /* else, exec_index points to simulated program arguments */
 
   /* check simulator-specific options */
-  sim_check_options(sim_odb, argc, argv);
+  sim1.sim_check_options(sim_odb, argc, argv);
 
 #ifndef _MSC_VER
   /* set simulator scheduling priority */
@@ -375,14 +377,14 @@ main(int argc, char **argv, char **envp)
   md_init_decoder();
 
   /* initialize all simulation modules */
-  sim_init();
+  sim1.sim_init();
 
   /* initialize architected state */
-  sim_load_prog(argv[exec_index], argc-exec_index, argv+exec_index, envp);
+  sim1.sim_load_prog(argv[exec_index], argc-exec_index, argv+exec_index, envp);
 
   /* register all simulator stats */
   sim_sdb = stat_new();
-  sim_reg_stats(sim_sdb);
+  sim1.sim_reg_stats(sim_sdb);
 #if 0 /* not portable... :-( */
   stat_reg_uint(sim_sdb, "sim_mem_usage",
 		"total simulator (data) memory usage",
@@ -404,7 +406,7 @@ main(int argc, char **argv, char **envp)
     s[strlen(s)-1] = '\0';
   fprintf(stderr, "\nsim: simulation started @ %s, options follow:\n", s);
   opt_print_options(sim_odb, stderr, /* short */TRUE, /* notes */TRUE);
-  sim_aux_config(stderr);
+  sim1.sim_aux_config(stderr);
   fprintf(stderr, "\n");
 
   /* omit option dump time from rate stats */
@@ -414,7 +416,7 @@ main(int argc, char **argv, char **envp)
     exit_now(0);
 
   running = TRUE;
-  sim_main();
+  sim1.sim_main();
 
   /* simulation finished early */
   exit_now(0);

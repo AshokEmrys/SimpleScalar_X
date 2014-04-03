@@ -1078,7 +1078,7 @@ process_option(struct opt_odb_t *odb,	/* option database */
 	}
       break;
     default:
-      panic("bogus option class");
+      panic("bogus option classM");
     }
 
   return index;
@@ -1404,7 +1404,7 @@ opt_print_option(struct opt_opt_t *opt,/* option variable */
 	}
       break;
     default:
-      panic("bogus option class");
+      panic("bogus option classM");
     }
 }
 
@@ -1573,7 +1573,7 @@ print_help(struct opt_opt_t *opt,	/* option variable */
 	s = "<string list...>";
       break;
     default:
-      panic("bogus option class");
+      panic("bogus option classM");
     }
   fprintf(fd, "%-16s # ", s);
   opt_print_option(opt, fd);

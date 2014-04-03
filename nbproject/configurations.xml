@@ -63,7 +63,6 @@
       <itemPath>range.c</itemPath>
       <itemPath>regs.c</itemPath>
       <itemPath>resource.c</itemPath>
-      <itemPath>sim-outorder.c</itemPath>
       <itemPath>sim-outorder.cpp</itemPath>
       <itemPath>stats.c</itemPath>
       <itemPath>symbol.c</itemPath>
@@ -170,8 +169,6 @@
       <item path="resource.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="resource.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="sim-outorder.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -311,8 +308,6 @@
       <item path="resource.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="resource.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="sim-outorder.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="sim-outorder.cpp" ex="false" tool="1" flavor2="0">
       </item>

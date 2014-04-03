@@ -142,7 +142,7 @@ stat_eval_ident(struct eval_state_t *es)/* an expression evaluator */
       }
       break;
     default:
-      panic("bogus stat class");
+      panic("bogus stat classM");
     }
 
   return val;
@@ -216,7 +216,7 @@ stat_delete(struct stat_sdb_t *sdb)	/* stats database */
 	  stat->variant.for_sdist.sarr = NULL;
 	  break;
 	default:
-	  panic("bogus stat class");
+	  panic("bogus stat classM");
 	}
       /* free stat variable record */
       free(stat);
@@ -989,7 +989,7 @@ stat_print_stat(struct stat_sdb_t *sdb,	/* stat database */
       }
       break;
     default:
-      panic("bogus stat class");
+      panic("bogus stat classM");
     }
   fprintf(fd, "\n");
 }

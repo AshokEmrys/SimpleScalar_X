@@ -121,7 +121,7 @@ struct stat_stat_t {
   char *name;			/* stat name */
   char *desc;			/* stat description */
   char *format;			/* stat output print format */
-  enum stat_class_t sc;		/* stat class */
+  enum stat_class_t sc;		/* stat classM */
   union stat_variant_t {
     /* sc == sc_int */
     struct stat_for_int_t {

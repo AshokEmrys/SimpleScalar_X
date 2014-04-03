@@ -97,45 +97,4 @@ extern FILE *sim_eio_fd;
 extern FILE *sim_progfd;
 
 
-/*
- * main simulator interfaces, called in the following order
- */
-
-/* register simulator-specific options */
-void sim_reg_options(struct opt_odb_t *odb);
-
-/* main() parses options next... */
-
-/* check simulator-specific option values */
-void sim_check_options(struct opt_odb_t *odb, int argc, char **argv);
-
-/* register simulator-specific statistics */
-void sim_reg_stats(struct stat_sdb_t *sdb);
-
-/* initialize the simulator */
-void sim_init(void);
-
-/* load program into simulated state */
-void sim_load_prog(char *fname, int argc, char **argv, char **envp);
-
-/* main() prints the option database values next... */
-
-/* print simulator-specific configuration information */
-void sim_aux_config(FILE *stream);
-
-/* start simulation, program loaded, processor precise state initialized */
-void sim_main(void);
-
-/* main() prints the stats database values next... */
-
-/* dump simulator-specific auxiliary simulator statistics */
-void sim_aux_stats(FILE *stream);
-
-/* un-initialize simulator-specific state */
-void sim_uninit(void);
-
-/* print all simulator stats */
-void
-sim_print_stats(FILE *fd);		/* output stream */
-
 #endif /* SIM_H */

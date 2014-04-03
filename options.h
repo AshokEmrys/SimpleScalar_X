@@ -85,7 +85,7 @@ struct opt_opt_t {
   char *format;			/* option value print format */
   int print;			/* print option during `-dumpconfig'? */
   int accrue;			/* accrue list across uses */
-  enum opt_class_t oc;		/* class of this option */
+  enum opt_class_t oc;		/* classM of this option */
   union opt_variant_t {
     /* oc == oc_int */
     struct opt_for_int_t {

@@ -117,7 +117,7 @@ struct bpred_btb_ent_t {
 
 /* direction predictor def */
 struct bpred_dir_t {
-  enum bpred_class class;	/* type of predictor */
+  enum bpred_class classM;	/* type of predictor */
   union {
     struct {
       unsigned int size;	/* number of entries in direct-mapped table */
@@ -127,7 +127,7 @@ struct bpred_dir_t {
       int l1size;		/* level-1 size, number of history regs */
       int l2size;		/* level-2 size, number of pred states */
       int shift_width;		/* amount of history in level-1 shift regs */
-      int xor;			/* history xor address flag */
+      int xorV;			/* history xorV address flag */
       int *shiftregs;		/* level-1 history table */
       unsigned char *l2table;	/* level-2 prediction state table */
     } two;
@@ -136,7 +136,7 @@ struct bpred_dir_t {
 
 /* branch predictor def */
 struct bpred_t {
-  enum bpred_class class;	/* type of predictor */
+  enum bpred_class classM;	/* type of predictor */
   struct {
     struct bpred_dir_t *bimod;	  /* first direction predictor */
     struct bpred_dir_t *twolev;	  /* second direction predictor */
@@ -188,13 +188,13 @@ struct bpred_update_t {
 
 /* create a branch predictor */
 struct bpred_t *			/* branch predictory instance */
-bpred_create(enum bpred_class class,	/* type of predictor to create */
+bpred_create(enum bpred_class classM,	/* type of predictor to create */
 	     unsigned int bimod_size,	/* bimod table size */
 	     unsigned int l1size,	/* level-1 table size */
 	     unsigned int l2size,	/* level-2 table size */
 	     unsigned int meta_size,	/* meta predictor table size */
 	     unsigned int shift_width,	/* history register width */
-	     unsigned int xor,		/* history xor address flag */
+	     unsigned int xorV,		/* history xorV address flag */
 	     unsigned int btb_sets,	/* number of sets in BTB */ 
 	     unsigned int btb_assoc,	/* BTB associativity */
 	     unsigned int retstack_size);/* num entries in ret-addr stack */
@@ -202,11 +202,11 @@ bpred_create(enum bpred_class class,	/* type of predictor to create */
 /* create a branch direction predictor */
 struct bpred_dir_t *		/* branch direction predictor instance */
 bpred_dir_create (
-  enum bpred_class class,	/* type of predictor to create */
+  enum bpred_class classM,	/* type of predictor to create */
   unsigned int l1size,		/* level-1 table size */
   unsigned int l2size,		/* level-2 table size (if relevant) */
   unsigned int shift_width,	/* history register width */
-  unsigned int xor);	   	/* history xor address flag */
+  unsigned int xorV);	   	/* history xorV address flag */
 
 /* print branch predictor configuration */
 void

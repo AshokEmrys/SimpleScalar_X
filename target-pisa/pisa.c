@@ -535,7 +535,7 @@ md_crc_regs(struct regs_t *regs)
   return crc_accum;
 }
 
-/* xor checksum registers */
+/* xorV checksum registers */
 word_t
 md_xor_regs(struct regs_t *regs)
 {

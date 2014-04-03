@@ -29,7 +29,7 @@
 
 #include <iostream>
 
-#include<thread>
+
 
 #include "host.h"
 #include "misc.h"
@@ -48,6 +48,33 @@
 #include "ptrace.h"
 #include "dlite.h"
 #include "sim.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+void
+sim_print_stats(FILE *fd);
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*Definitions*/
 #define MAX_PCSTAT_VARS 8
@@ -88,7 +115,7 @@
       ? (counter_t)*((STAT)->variant.for_uint.var)		\
       : ((STAT)->sc == sc_counter					\
 	 ? *((STAT)->variant.for_counter.var)				\
-	 : (panic("bad stat class"), 0))))
+	 : (panic("bad stat classM"), 0))))
 
 #define RSLINK_INIT(RSL, RS)						\
   ((RSL).next = NULL, (RSL).rs = (RS), (RSL).tag = (RS)->tag)
@@ -134,8 +161,169 @@
 #define R_BMAP_SZ       (BITMAP_SIZE(MD_NUM_IREGS))
 #define F_BMAP_SZ       (BITMAP_SIZE(MD_NUM_FREGS))
 #define C_BMAP_SZ       (BITMAP_SIZE(MD_NUM_CREGS))
-
-
+#define HASH_ADDR(ADDR)							\
+  ((((ADDR) >> 24)^((ADDR) >> 16)^((ADDR) >> 8)^(ADDR)) & (STORE_HASH_SIZE-1))
+#define DNA			(0)
+#if defined(TARGET_PISA)
+#define DGPR(N)			(N)
+#define DGPR_D(N)		((N) &~1)
+#define DFPR_L(N)		(((N)+32)&~1)
+#define DFPR_F(N)		(((N)+32)&~1)
+#define DFPR_D(N)		(((N)+32)&~1)
+#define DHI			(0+32+32)
+#define DLO			(1+32+32)
+#define DFCC			(2+32+32)
+#define DTMP			(3+32+32)
+#elif defined(TARGET_ALPHA)
+#define DGPR(N)			(31 - (N)) 
+#define DFPR(N)			(((N) == 31) ? DNA : ((N)+32))
+#define DFPCR			(0+32+32)
+#define DUNIQ			(1+32+32)
+#define DTMP			(2+32+32)
+#else
+#error No ISA target defined...
+#endif
+#define SET_NPC(EXPR)           (regs.regs_NPC = (EXPR))
+#undef  SET_TPC
+#define SET_TPC(EXPR)		(target_PC = (EXPR))
+#define CPC                     (regs.regs_PC)
+#define SET_CPC(EXPR)           (regs.regs_PC = (EXPR))
+#define GPR(N)                  (BITMAP_SET_P(use_spec_R, R_BMAP_SZ, (N))\
+				 ? spec_regs_R[N]                       \
+				 : regs.regs_R[N])
+#define SET_GPR(N,EXPR)         (spec_mode				\
+				 ? ((spec_regs_R[N] = (EXPR)),		\
+				    BITMAP_SET(use_spec_R, R_BMAP_SZ, (N)),\
+				    spec_regs_R[N])			\
+				 : (regs.regs_R[N] = (EXPR)))
+#if defined(TARGET_PISA)
+#define FPR_L(N)                (BITMAP_SET_P(use_spec_F, F_BMAP_SZ, ((N)&~1))\
+				 ? spec_regs_F.l[(N)]                   \
+				 : regs.regs_F.l[(N)])
+#define SET_FPR_L(N,EXPR)       (spec_mode				\
+				 ? ((spec_regs_F.l[(N)] = (EXPR)),	\
+				    BITMAP_SET(use_spec_F,F_BMAP_SZ,((N)&~1)),\
+				    spec_regs_F.l[(N)])			\
+				 : (regs.regs_F.l[(N)] = (EXPR)))
+#define FPR_F(N)                (BITMAP_SET_P(use_spec_F, F_BMAP_SZ, ((N)&~1))\
+				 ? spec_regs_F.f[(N)]                   \
+				 : regs.regs_F.f[(N)])
+#define SET_FPR_F(N,EXPR)       (spec_mode				\
+				 ? ((spec_regs_F.f[(N)] = (EXPR)),	\
+				    BITMAP_SET(use_spec_F,F_BMAP_SZ,((N)&~1)),\
+				    spec_regs_F.f[(N)])			\
+				 : (regs.regs_F.f[(N)] = (EXPR)))
+#define FPR_D(N)                (BITMAP_SET_P(use_spec_F, F_BMAP_SZ, ((N)&~1))\
+				 ? spec_regs_F.d[(N) >> 1]              \
+				 : regs.regs_F.d[(N) >> 1])
+#define SET_FPR_D(N,EXPR)       (spec_mode				\
+				 ? ((spec_regs_F.d[(N) >> 1] = (EXPR)),	\
+				    BITMAP_SET(use_spec_F,F_BMAP_SZ,((N)&~1)),\
+				    spec_regs_F.d[(N) >> 1])		\
+				 : (regs.regs_F.d[(N) >> 1] = (EXPR)))
+#define HI			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ, 0)\
+				 ? spec_regs_C.hi			\
+				 : regs.regs_C.hi)
+#define SET_HI(EXPR)		(spec_mode				\
+				 ? ((spec_regs_C.hi = (EXPR)),		\
+				    BITMAP_SET(use_spec_C, C_BMAP_SZ,0),\
+				    spec_regs_C.hi)			\
+				 : (regs.regs_C.hi = (EXPR)))
+#define LO			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ, 1)\
+				 ? spec_regs_C.lo			\
+				 : regs.regs_C.lo)
+#define SET_LO(EXPR)		(spec_mode				\
+				 ? ((spec_regs_C.lo = (EXPR)),		\
+				    BITMAP_SET(use_spec_C, C_BMAP_SZ,1),\
+				    spec_regs_C.lo)			\
+				 : (regs.regs_C.lo = (EXPR)))
+#define FCC			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,2)\
+				 ? spec_regs_C.fcc			\
+				 : regs.regs_C.fcc)
+#define SET_FCC(EXPR)		(spec_mode				\
+				 ? ((spec_regs_C.fcc = (EXPR)),		\
+				    BITMAP_SET(use_spec_C,C_BMAP_SZ,2),\
+				    spec_regs_C.fcc)			\
+				 : (regs.regs_C.fcc = (EXPR)))
+#elif defined(TARGET_ALPHA)
+#define FPR_Q(N)		(BITMAP_SET_P(use_spec_F, F_BMAP_SZ, (N))\
+				 ? spec_regs_F.q[(N)]                   \
+				 : regs.regs_F.q[(N)])
+#define SET_FPR_Q(N,EXPR)	(spec_mode				\
+				 ? ((spec_regs_F.q[(N)] = (EXPR)),	\
+				    BITMAP_SET(use_spec_F,F_BMAP_SZ, (N)),\
+				    spec_regs_F.q[(N)])			\
+				 : (regs.regs_F.q[(N)] = (EXPR)))
+#define FPR(N)			(BITMAP_SET_P(use_spec_F, F_BMAP_SZ, (N))\
+				 ? spec_regs_F.d[(N)]			\
+				 : regs.regs_F.d[(N)])
+#define SET_FPR(N,EXPR)		(spec_mode				\
+				 ? ((spec_regs_F.d[(N)] = (EXPR)),	\
+				    BITMAP_SET(use_spec_F,F_BMAP_SZ, (N)),\
+				    spec_regs_F.d[(N)])			\
+				 : (regs.regs_F.d[(N)] = (EXPR)))
+#define FPCR			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,0)\
+				 ? spec_regs_C.fpcr			\
+				 : regs.regs_C.fpcr)
+#define SET_FPCR(EXPR)		(spec_mode				\
+				 ? ((spec_regs_C.fpcr = (EXPR)),	\
+				   BITMAP_SET(use_spec_C,C_BMAP_SZ,0),\
+				    spec_regs_C.fpcr)			\
+				 : (regs.regs_C.fpcr = (EXPR)))
+#define UNIQ			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,1)\
+				 ? spec_regs_C.uniq			\
+				 : regs.regs_C.uniq)
+#define SET_UNIQ(EXPR)		(spec_mode				\
+				 ? ((spec_regs_C.uniq = (EXPR)),	\
+				   BITMAP_SET(use_spec_C,C_BMAP_SZ,1),\
+				    spec_regs_C.uniq)			\
+				 : (regs.regs_C.uniq = (EXPR)))
+#define FCC			(BITMAP_SET_P(use_spec_C, C_BMAP_SZ,2)\
+				 ? spec_regs_C.fcc			\
+				 : regs.regs_C.fcc)
+#define SET_FCC(EXPR)		(spec_mode				\
+				 ? ((spec_regs_C.fcc = (EXPR)),		\
+				    BITMAP_SET(use_spec_C,C_BMAP_SZ,1),\
+				    spec_regs_C.fcc)			\
+				 : (regs.regs_C.fcc = (EXPR)))
+#else
+#error No ISA target defined...
+#endif
+#define __READ_SPECMEM(SRC, SRC_V, FAULT)				\
+  (addr = (SRC),							\
+   (spec_mode								\
+    ? ((FAULT) = spec_mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))\
+    : ((FAULT) = mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))),	\
+   SRC_V)
+#define READ_BYTE(SRC, FAULT)						\
+  __READ_SPECMEM((SRC), temp_byte, (FAULT))
+#define READ_HALF(SRC, FAULT)						\
+  MD_SWAPH(__READ_SPECMEM((SRC), temp_half, (FAULT)))
+#define READ_WORD(SRC, FAULT)						\
+  MD_SWAPW(__READ_SPECMEM((SRC), temp_word, (FAULT)))
+#ifdef HOST_HAS_QWORD
+#define READ_QWORD(SRC, FAULT)						\
+  MD_SWAPQ(__READ_SPECMEM((SRC), temp_qword, (FAULT)))
+#endif 
+#define __WRITE_SPECMEM(SRC, DST, DST_V, FAULT)				\
+  (DST_V = (SRC), addr = (DST),						\
+   (spec_mode								\
+    ? ((FAULT) = spec_mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))\
+    : ((FAULT) = mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))))
+#define WRITE_BYTE(SRC, DST, FAULT)					\
+  __WRITE_SPECMEM((SRC), (DST), temp_byte, (FAULT))
+#define WRITE_HALF(SRC, DST, FAULT)					\
+  __WRITE_SPECMEM(MD_SWAPH(SRC), (DST), temp_half, (FAULT))
+#define WRITE_WORD(SRC, DST, FAULT)					\
+  __WRITE_SPECMEM(MD_SWAPW(SRC), (DST), temp_word, (FAULT))
+#ifdef HOST_HAS_QWORD
+#define WRITE_QWORD(SRC, DST, FAULT)					\
+  __WRITE_SPECMEM(MD_SWAPQ(SRC), (DST), temp_qword, (FAULT))
+#endif 
+#define SYSCALL(INST)							\
+  (		\
+   (spec_mode ? panic("speculative syscall") : (void) 0),		\
+   sys_syscall(&regs, mem_access, mem, INST, TRUE))
 
 
 //Typedefs
@@ -231,7 +419,6 @@ struct RS_link {
   next = NULL;
   rs = NULL;
   tag = 0;
-  x = 0;
   }
 };
 
@@ -240,7 +427,7 @@ struct CV_link {
   int odep_num;
   CV_link()
   {
-  RUU_station = NULL;
+  rs = NULL;
   odep_num = 0;
   }
 };
@@ -379,7 +566,9 @@ public:
  struct fetch_rec *fetch_data;
  int fetch_num;
  int fetch_tail, fetch_head;
- 
+ struct RS_link last_op;
+ int last_inst_missed = FALSE;
+ int last_inst_tmissed = FALSE;
  
  
  
@@ -489,7 +678,7 @@ eventq_dump(FILE *stream);
 void
 eventq_queue_event(struct RUU_station *rs, tick_t when);
 
-static struct RUU_station *
+struct RUU_station *
 eventq_next_event(void);
 
 void
@@ -531,7 +720,60 @@ tracer_recover(void);
 void
 tracer_init(void);
 
+enum md_fault_type
+spec_mem_access(struct mem_t *mem,		
+		enum mem_cmd cmd,		
+		md_addr_t addr,			
+		void *p,			
+		int nbytes);
 
+void
+mspec_dump(FILE *stream);
+
+char *					
+simoo_mem_obj(struct mem_t *mem,		
+	      int is_write,			
+	      md_addr_t addr,			
+	      char *p,				
+	      int nbytes);
+
+void
+ruu_link_idep(struct RUU_station *rs,		
+	      int idep_num,			
+	      int idep_name);
+
+void
+ruu_install_odep(struct RUU_station *rs,	
+		 int odep_num,			
+		 int odep_name);
+
+char *					
+simoo_reg_obj(struct regs_t *xregs,		
+	      int is_write,			
+	      enum md_reg_type rt,		
+	      int reg,				
+	      struct eval_value_t *val);
+
+void
+ruu_dispatch(void);
+
+void
+fetch_init(void);
+
+void
+fetch_dump(FILE *stream);
+
+void
+ruu_fetch(void);
+
+char *					
+simoo_mstate_obj(FILE *stream,			
+		 char *cmd,			
+		 struct regs_t *regs,		
+		 struct mem_t *mem)	;
+
+void
+sim_main(void);
 
 
  

@@ -78,7 +78,7 @@
 ##	Windows NT version 4.0, Cygnus CygWin/32 beta 19
 ##
 CC = g++
-OFLAGS = -O0 -g -Wall
+OFLAGS = -O0 -g 
 MFLAGS = `./sysprobe -flags`
 MLIBS  = `./sysprobe -libs` -lm
 ENDIAN = `./sysprobe -s`
@@ -278,7 +278,7 @@ CFLAGS = $(MFLAGS) $(FFLAGS) $(OFLAGS) $(BINUTILS_INC) $(BINUTILS_LIB)
 # all the sources
 #
 SRCS =	main.c sim-fast.c sim-safe.c sim-cache.c sim-profile.c \
-	sim-eio.c sim-bpred.c sim-cheetah.c sim-outorder.c \
+	sim-eio.c sim-bpred.c sim-cheetah.c sim-outorder.cpp \
 	memory.c regs.c cache.c bpred.c ptrace.c eventq.c \
 	resource.c endian.c dlite.c symbol.c eval.c options.c range.c \
 	eio.c stats.c endian.c misc.c \
@@ -305,9 +305,10 @@ OBJS =	main.$(OEXT) syscall.$(OEXT) memory.$(OEXT) regs.$(OEXT) \
 #
 # programs to build
 #
-PROGS = sim-fast$(EEXT) sim-safe$(EEXT) sim-eio$(EEXT) \
-	sim-bpred$(EEXT) sim-profile$(EEXT) \
-	sim-cache$(EEXT) sim-outorder$(EEXT) # sim-cheetah$(EEXT)
+PROGS = sim-outorder$(EEXT) 
+#sim-safe$(EEXT) sim-eio$(EEXT) \
+#	sim-bpred$(EEXT) sim-profile$(EEXT) \
+#	sim-cache$(EEXT) sim-outorder$(EEXT) # sim-cheetah$(EEXT)
 
 #
 # all targets, NOTE: library ordering is important...
@@ -492,7 +493,7 @@ sim-cheetah.$(OEXT): libcheetah/libcheetah.h sim.h
 sim-outorder.$(OEXT): host.h misc.h machine.h machine.def regs.h memory.h
 sim-outorder.$(OEXT): options.h stats.h eval.h cache.h loader.h syscall.h
 sim-outorder.$(OEXT): bpred.h resource.h bitmap.h ptrace.h range.h dlite.h
-sim-outorder.$(OEXT): sim.h
+sim-outorder.$(OEXT): sim.h sim-outorder.hpp
 memory.$(OEXT): host.h misc.h machine.h machine.def options.h stats.h eval.h
 memory.$(OEXT): memory.h
 regs.$(OEXT): host.h misc.h machine.h machine.def loader.h regs.h memory.h

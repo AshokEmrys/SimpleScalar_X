@@ -277,7 +277,7 @@ ident_evaluator(struct eval_state_t *es)	/* expression evaluator */
 	  }
 	  break;
 	default:
-	  panic("bogus stat class");
+	  panic("bogus stat classM");
 	}
       return val;
     }
@@ -1666,7 +1666,7 @@ dlite_dis(int nargs, union arg_val_t args[],	/* command arguments */
 struct dlite_break_t {
   struct dlite_break_t *next;	/* next active breakpoint */
   int id;			/* break id */
-  int class;			/* break class */
+  int classM;			/* break classM */
   struct range_range_t range;	/* break range */
 };
 
@@ -1676,31 +1676,31 @@ static struct dlite_break_t *dlite_bps = NULL;
 /* unique id of next breakpoint */
 static int break_id = 1;
 
-/* return breakpoint class as a string */
-static char *					/* breakpoint class string */
-bp_class_str(int class)				/* breakpoint class mask */
+/* return breakpoint classM as a string */
+static char *					/* breakpoint classM string */
+bp_class_str(int classM)				/* breakpoint classM mask */
 {
-  if (class == (ACCESS_READ|ACCESS_WRITE|ACCESS_EXEC))
+  if (classM == (ACCESS_READ|ACCESS_WRITE|ACCESS_EXEC))
     return "read|write|exec";
-  else if (class == (ACCESS_READ|ACCESS_WRITE))
+  else if (classM == (ACCESS_READ|ACCESS_WRITE))
     return "read|write";
-  else if (class == (ACCESS_WRITE|ACCESS_EXEC))
+  else if (classM == (ACCESS_WRITE|ACCESS_EXEC))
     return "write|exec";
-  else if (class == (ACCESS_READ|ACCESS_EXEC))
+  else if (classM == (ACCESS_READ|ACCESS_EXEC))
     return "read|exec";
-  else if (class == ACCESS_READ)
+  else if (classM == ACCESS_READ)
     return "read";
-  else if (class == ACCESS_WRITE)
+  else if (classM == ACCESS_WRITE)
     return "write";
-  else if (class == ACCESS_EXEC)
+  else if (classM == ACCESS_EXEC)
     return "exec";
   else
-    panic("bogus access class");
+    panic("bogus access classM");
 }
 
-/* set a breakpoint of class CLASS at address ADDR */
+/* set a breakpoint of classM classM at address ADDR */
 static char *					/* err str, NULL for no err */
-set_break(int class,				/* break class, use ACCESS_* */
+set_break(int classM,				/* break classM, use ACCESS_* */
 	  struct range_range_t *range)		/* range breakpoint */
 {
   struct dlite_break_t *bp;
@@ -1712,14 +1712,14 @@ set_break(int class,				/* break class, use ACCESS_* */
 
   bp->id = break_id++;
   bp->range = *range;
-  bp->class = class;
+  bp->classM = classM;
 
   bp->next = dlite_bps;
   dlite_bps = bp;
 
   fprintf(stdout, "breakpoint #%d set @ ", bp->id);
   range_print_range(&bp->range, stdout);
-  fprintf(stdout, ", class: %s\n", bp_class_str(class));
+  fprintf(stdout, ", classM: %s\n", bp_class_str(classM));
 
   /* a breakpoint is set now, check for a breakpoint */
   dlite_check = TRUE;
@@ -1758,7 +1758,7 @@ delete_break(int id)				/* id of brkpnt to delete */
 
   fprintf(stdout, "breakpoint #%d deleted @ ",  bp->id);
   range_print_range(&bp->range, stdout);
-  fprintf(stdout, ", class: %s\n", bp_class_str(bp->class));
+  fprintf(stdout, ", classM: %s\n", bp_class_str(bp->classM));
 
   bp->next = NULL;
   free(bp);
@@ -1804,7 +1804,7 @@ __check_break(md_addr_t next_PC,		/* address of next inst */
       switch (bp->range.start.ptype)
 	{
 	case pt_addr:
-	  if ((bp->class & ACCESS_EXEC)
+	  if ((bp->classM & ACCESS_EXEC)
 	      && !range_cmp_range(&bp->range, next_PC))
 	    {
 	      /* hit a code breakpoint */
@@ -1814,7 +1814,7 @@ __check_break(md_addr_t next_PC,		/* address of next inst */
 	      break_access = ACCESS_EXEC;
 	      return TRUE;
 	    }
-	  if ((bp->class & ACCESS_READ)
+	  if ((bp->classM & ACCESS_READ)
 	      && ((access & ACCESS_READ)
 		  && !range_cmp_range(&bp->range, addr)))
 	    {
@@ -1825,7 +1825,7 @@ __check_break(md_addr_t next_PC,		/* address of next inst */
 	      break_access = ACCESS_READ;
 	      return TRUE;
 	    }
-	  if ((bp->class & ACCESS_WRITE)
+	  if ((bp->classM & ACCESS_WRITE)
 	      && ((access & ACCESS_WRITE)
 		  && !range_cmp_range(&bp->range, addr)))
 	    {
@@ -2017,7 +2017,7 @@ dlite_breaks(int nargs, union arg_val_t args[],	/* command arguments */
     {
       fprintf(stdout, "  breakpoint #%d @ ",  bp->id);
       range_print_range(&bp->range, stdout);
-      fprintf(stdout, ", class: %s\n", bp_class_str(bp->class));
+      fprintf(stdout, ", classM: %s\n", bp_class_str(bp->classM));
     }
 
   /* no error */

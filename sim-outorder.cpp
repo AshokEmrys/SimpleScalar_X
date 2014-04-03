@@ -19,7 +19,7 @@
 
 #include "sim-outorder.hpp"
 
-/*Sim Outorder Class Definition*/
+/*Sim Outorder classM Definition*/
 
 simoutorder::simoutorder()
 {
@@ -227,7 +227,7 @@ simoutorder::sim_reg_options(struct opt_odb_t *odb)
 "      N   # entries in first level (# of shift register(s))\n"
 "      W   width of shift register(s)\n"
 "      M   # entries in 2nd level (# of counters, or other FSM)\n"
-"      X   (yes-1/no-0) xor history and address for 2nd level index\n"
+"      X   (yes-1/no-0) xorV history and address for 2nd level index\n"
 "    Sample predictors:\n"
 "      GAg     : 1, W, 2^W, 0\n"
 "      GAp     : 1, W, M (M > 2^W), 0\n"
@@ -247,7 +247,7 @@ simoutorder::sim_reg_options(struct opt_odb_t *odb)
 		   TRUE, NULL, FALSE);
   opt_reg_int_list(odb, "-bpred:2lev",
                    "2-level predictor config "
-		   "(<l1size> <l2size> <hist_size> <xor>)",
+		   "(<l1size> <l2size> <hist_size> <xorV>)",
                    twolev_config, twolev_nelt, &twolev_nelt,
 		   twolev_config,
                    TRUE, NULL, FALSE);
@@ -454,7 +454,7 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
   else if (!mystricmp(pred_type, "2lev"))
     {
       if (twolev_nelt != 4)
-	fatal("bad 2-level pred config (<l1size> <l2size> <hist_size> <xor>)");
+	fatal("bad 2-level pred config (<l1size> <l2size> <hist_size> <xorV>)");
       if (btb_nelt != 2)
 	fatal("bad btb config (<num_sets> <associativity>)");
       pred = bpred_create(BPred2Level,
@@ -471,7 +471,7 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
   else if (!mystricmp(pred_type, "comb"))
     {
       if (twolev_nelt != 4)
-	fatal("bad 2-level pred config (<l1size> <l2size> <hist_size> <xor>)");
+	fatal("bad 2-level pred config (<l1size> <l2size> <hist_size> <xorV>)");
       if (bimod_nelt != 1)
 	fatal("bad bimod predictor config (<table_size>)");
       if (comb_nelt != 1)
@@ -656,6 +656,7 @@ simoutorder::sim_check_options(struct opt_odb_t *odb,
   fu_config[FU_FPMULT_INDEX].quantity = res_fpmult;
 }
 
+void
 simoutorder::sim_reg_stats(struct stat_sdb_t *sdb)   
 {
   int i;
@@ -852,7 +853,7 @@ simoutorder::sim_uninit(void)
 void
 simoutorder::ruu_init(void)
 {
-  RUU = calloc(RUU_size, sizeof(struct RUU_station));
+  RUU = (RUU_station*) calloc(RUU_size, sizeof(struct RUU_station));
   if (!RUU)
     fatal("out of virtual memory");
   RUU_num = 0;
@@ -919,7 +920,7 @@ simoutorder::ruu_dump(FILE *stream)
 void
 simoutorder::lsq_init(void)
 {
-  LSQ = calloc(LSQ_size, sizeof(struct RUU_station));
+  LSQ = (RUU_station*) calloc(LSQ_size, sizeof(struct RUU_station));
   if (!LSQ)
     fatal("out of virtual memory");
   LSQ_num = 0;
@@ -957,7 +958,7 @@ simoutorder::rslink_init(int nlinks)
   rslink_free_list = NULL;
   for (i=0; i<nlinks; i++)
     {
-      link = calloc(1, sizeof(struct RS_link));
+      link = (RS_link*) calloc(1, sizeof(struct RS_link));
       if (!link)
 	fatal("out of virtual memory");
       link->next = rslink_free_list;
@@ -1636,7 +1637,7 @@ simoutorder::spec_mem_access(struct mem_t *mem,
     {
       if (!bucket_free_list)
 	{
-	  bucket_free_list = calloc(1, sizeof(struct spec_mem_ent));
+	  bucket_free_list = (spec_mem_ent*) calloc(1, sizeof(struct spec_mem_ent));
 	  if (!bucket_free_list)
 	    fatal("out of virtual memory");
 	}
@@ -2030,7 +2031,7 @@ simoutorder::ruu_dispatch(void)
       fault = md_fault_none;
       switch (op)
 	{
-#define DEFINST(OP,MSK,NAME,OPFORM,RES,CLASS,O1,O2,I1,I2,I3)		\
+#define DEFINST(OP,MSK,NAME,OPFORM,RES,classM,O1,O2,I1,I2,I3)		\
 	case OP:							\
 	  	\
 	  out1 = O1; out2 = O2;						\
@@ -2064,7 +2065,7 @@ simoutorder::ruu_dispatch(void)
 	}
       if (!spec_mode && verbose)
         {
-          myfprintf(stderr, "++ %10n [xor: 0x%08x] {%d} @ 0x%08p: ",
+          myfprintf(stderr, "++ %10n [xorV: 0x%08x] {%d} @ 0x%08p: ",
                     sim_num_insn, md_xor_regs(&regs),
                     inst_seq+1, regs.regs_PC);
           md_print_insn(inst, regs.regs_PC, stderr);

@@ -551,13 +551,13 @@ extern char *md_amode_str[md_amode_NUM];
  * configure the EXO package
  */
 
-/* EXO pointer class */
+/* EXO pointer classM */
 typedef qword_t exo_address_t;
 
-/* EXO integer class, 64-bit encoding */
+/* EXO integer classM, 64-bit encoding */
 typedef qword_t exo_integer_t;
 
-/* EXO floating point class, 64-bit encoding */
+/* EXO floating point classM, 64-bit encoding */
 typedef double exo_float_t;
 
 
@@ -634,7 +634,7 @@ void md_print_cregs(md_ctrl_t regs, FILE *stream);
 /* compute CRC of all registers */
 word_t md_crc_regs(struct regs_t *regs);
 
-/* xor checksum registers */
+/* xorV checksum registers */
 word_t md_xor_regs(struct regs_t *regs);
 
 
