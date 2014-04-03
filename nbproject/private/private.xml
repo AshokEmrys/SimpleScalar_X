@@ -7,22 +7,41 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/symbol.c</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/host.h</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/machine.h</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/memory.c</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/sim-outorder.hpp</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/dlite.c</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/regs.c</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/cache.h</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/main.c</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/sim-outorder1.hpp</file>
             <file>file:/home/x/pwd/local/netbeans/SimpleScalar/sim-outorder.cpp</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/misc.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/cache.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/options.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/memory.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/misc.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/regs.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/libexo/libexo.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/libexo/libexo.h</file>
             <file>file:/home/x/pwd/local/netbeans/SimpleScalar/bpred.c</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/syscall.c</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/loader.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/bpred.h</file>
             <file>file:/home/x/pwd/local/netbeans/SimpleScalar/bitmap.h</file>
-            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/cache.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/target-pisa/configbig.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/dlite.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/eio.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/endian.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/sim-outorder.hpp</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/sim-outorder1.hpp</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/loader.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/syscall.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/config.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/target-pisa/configlit.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/target-pisa/ecoff.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/eval.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/eventq.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/host.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/machine.def</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/machine.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/ptrace.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/range.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/resource.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/sim.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/stats.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/symbol.h</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/version.h</file>
         </group>
     </open-files>
 </project-private>

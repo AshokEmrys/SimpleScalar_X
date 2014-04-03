@@ -55,7 +55,9 @@
 #include "host.h"
 #include "misc.h"
 #include "machine.h"
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /*
  * This module implements the SimpleScalar architected register state, which
  * includes integer and floating point registers and miscellaneous registers.
@@ -120,5 +122,9 @@ regs_dump(struct regs_t *regs,		/* register file to display */
 /* destroy a register file */
 void
 regs_destroy(struct regs_t *regs);	/* register file to release */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* REGS_H */

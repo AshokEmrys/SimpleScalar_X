@@ -612,6 +612,9 @@ char *md_reg_name(enum md_reg_type rt, int reg);
 /* default register accessor object */
 struct eval_value_t;
 struct regs_t;
+#ifdef __cplusplus 
+extern "C" {
+#endif
 char *						/* err str, NULL for no err */
 md_reg_obj(struct regs_t *regs,			/* registers to access */
 	   int is_write,			/* access type */
@@ -636,7 +639,9 @@ word_t md_crc_regs(struct regs_t *regs);
 
 /* xor checksum registers */
 word_t md_xor_regs(struct regs_t *regs);
-
+#ifdef __cplusplus
+}
+#endif
 
 /*
  * configure sim-outorder specifics
@@ -667,7 +672,9 @@ word_t md_xor_regs(struct regs_t *regs);
 /*
  * target-dependent routines
  */
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* intialize the inst decoder, this function builds the ISA decode tables */
 void md_init_decoder(void);
 
@@ -676,7 +683,9 @@ void
 md_print_insn(md_inst_t inst,		/* instruction to disassemble */
 	      md_addr_t pc,		/* addr of inst, used for PC-rels */
 	      FILE *stream);		/* output stream */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* PISA_H */
 
 

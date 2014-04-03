@@ -57,7 +57,9 @@
 #include "host.h"
 #include "misc.h"
 #include "machine.h"
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 enum range_ptype_t {
   pt_addr = 0,			/* address position */
   pt_inst,			/* instruction count position */
@@ -121,7 +123,9 @@ range_cmp_range1(struct range_range_t *range,	/* execution range */
 		 md_addr_t addr,		/* address value */
 		 counter_t icount,		/* instruction count */
 		 counter_t cycle);		/* cycle count */
-
+#ifdef __cplusplus
+}
+#endif
 
 /*
  *

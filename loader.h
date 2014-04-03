@@ -60,6 +60,9 @@
 #include "regs.h"
 #include "memory.h"
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /*
  * This module implements program loading.  The program text (code) and
  * initialized data are first read from the program executable.  Next, the
@@ -146,5 +149,7 @@ ld_load_prog(char *fname,		/* program to load */
 	     struct regs_t *regs,	/* registers to initialize for load */
 	     struct mem_t *mem,		/* memory space to load prog into */
 	     int zero_bss_segs);	/* zero uninit data segment? */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* LOADER_H */

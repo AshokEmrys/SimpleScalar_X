@@ -56,7 +56,9 @@
 #include "host.h"
 #include "misc.h"
 #include "machine.h"
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* forward declarations */
 struct eval_state_t;
 struct eval_value_t;
@@ -203,5 +205,7 @@ eval_expr(struct eval_state_t *es,	/* expression evaluator */
 void
 eval_print(FILE *stream,		/* output stream */
 	   struct eval_value_t val);	/* expression value to print */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* EVAL_H */

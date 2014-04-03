@@ -51,7 +51,9 @@
 
 #ifndef OPTIONS_H
 #define OPTIONS_H
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /*
  * This options package allows the user to specify the name, description,
  * location, and default values of program option variables.  In addition,
@@ -355,5 +357,7 @@ opt_reg_header(struct opt_odb_t *odb,	/* option database */
 void
 opt_reg_note(struct opt_odb_t *odb,	/* option database */
 	     char *note);		/* option note */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* OPTIONS_H */

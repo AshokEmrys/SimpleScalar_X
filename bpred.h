@@ -61,6 +61,9 @@
 #include "machine.h"
 #include "stats.h"
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /*
  * This module implements a number of branch predictor mechanisms.  The
  * following predictors are supported:
@@ -280,5 +283,7 @@ void
 bpred_dump(struct bpred_t *pred,	/* branch predictor instance */
 	   FILE *stream);		/* output stream */
 #endif
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* BPRED_H */

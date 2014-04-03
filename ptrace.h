@@ -57,6 +57,10 @@
 #include "machine.h"
 #include "range.h"
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
+
 /*
  * pipeline events:
  *
@@ -160,4 +164,7 @@ __ptrace_newstage(unsigned int iseq,	/* instruction sequence number */
 		  char *pstage,		/* pipeline stage entered */
 		  unsigned int pevents);/* pipeline events while in stage */
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* PTRACE_H */

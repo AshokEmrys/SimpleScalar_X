@@ -60,6 +60,9 @@
 #include "options.h"
 #include "stats.h"
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* number of entries in page translation hash table (must be power-of-two) */
 #define MEM_PTAB_SIZE		(32*1024)
 #define MEM_LOG_PTAB_SIZE	15
@@ -288,5 +291,7 @@ mem_bzero(mem_access_fn mem_fn,		/* user-specified memory accessor */
 	  struct mem_t *mem,		/* memory space to access */
 	  md_addr_t addr,		/* target address to access */
 	  int nbytes);			/* number of bytes to clear */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* MEMORY_H */

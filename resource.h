@@ -53,7 +53,9 @@
 #define RESOURCE_H
 
 #include <stdio.h>
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* maximum number of resource classes supported */
 #define MAX_RES_CLASSES		16
 
@@ -103,5 +105,7 @@ struct res_template *res_get(struct res_pool *pool, int classM);
 
 /* dump the resource pool POOL to stream STREAM */
 void res_dump(struct res_pool *pool, FILE *stream);
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* RESOURCE_H */

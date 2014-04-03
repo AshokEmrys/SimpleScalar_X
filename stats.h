@@ -57,7 +57,9 @@
 #include "host.h"
 #include "machine.h"
 #include "eval.h"
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /*
  * The stats package is a uniform module for handling statistical variables,
  * including counters, distributions, and expressions.  The user must first
@@ -328,5 +330,7 @@ stat_print_stats(struct stat_sdb_t *sdb,/* stat database */
 struct stat_stat_t *
 stat_find_stat(struct stat_sdb_t *sdb,	/* stat database */
 	       char *stat_name);	/* stat name */
-	       
+#ifdef __cplusplus
+}
+#endif
 #endif /* STAT_H */
