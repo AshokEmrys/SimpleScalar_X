@@ -395,7 +395,7 @@ class simoutorder
 {
 public:
  struct regs_t regs;
- struct mem_t *mem;
+ struct mem_t *mem = NULL;
  unsigned int max_insts;
  int fastfwd_count;
  int ptrace_nelt;
@@ -403,7 +403,7 @@ public:
  int ruu_ifq_size;
  int ruu_branch_penalty;
  int fetch_speed;
- char *pred_type;
+ char *pred_type = NULL;
  int bimod_nelt;
  int bimod_config[1] ={2048 };
  int twolev_nelt;
@@ -420,21 +420,21 @@ public:
  int ruu_commit_width;
  int RUU_size;
  int LSQ_size;
- char *cache_dl1_opt;
+ char *cache_dl1_opt = NULL;
  int cache_dl1_lat;
- char *cache_dl2_opt;
+ char *cache_dl2_opt = NULL;
  int cache_dl2_lat;
- char *cache_il1_opt;
+ char *cache_il1_opt = NULL;
  int cache_il1_lat;
- char *cache_il2_opt;
+ char *cache_il2_opt = NULL;
  int cache_il2_lat;
  int flush_on_syscalls;
  int compress_icache_addrs;
  int mem_nelt;
  int mem_lat[2] = { 18, 2 };
  int mem_bus_width;
- char *itlb_opt;
- char *dtlb_opt;
+ char *itlb_opt = NULL;
+ char *dtlb_opt = NULL;
  int tlb_miss_lat;
  int res_ialu;
  int res_imult;
@@ -462,16 +462,16 @@ public:
  int spec_mode = FALSE;
  unsigned ruu_fetch_issue_delay;
  int pred_perfect;
- char *bpred_spec_opt;
+ char *bpred_spec_opt = NULL;
  enum { spec_ID, spec_WB, spec_CT } bpred_spec_update;
- struct cache_t *cache_il1;
- struct cache_t *cache_il2;
- struct cache_t *cache_dl1;
- struct cache_t *cache_dl2;
- struct cache_t *itlb;
- struct cache_t *dtlb;
- struct bpred_t *pred;
- struct res_pool *fu_pool;
+ struct cache_t *cache_il1 = NULL;
+ struct cache_t *cache_il2 = NULL;
+ struct cache_t *cache_dl1 = NULL;
+ struct cache_t *cache_dl2 = NULL;
+ struct cache_t *itlb = NULL;
+ struct cache_t *dtlb = NULL;
+ struct bpred_t *pred = NULL;
+ struct res_pool *fu_pool = NULL;
  struct stat_stat_t *pcstat_stats[MAX_PCSTAT_VARS];
  counter_t pcstat_lastvals[MAX_PCSTAT_VARS];
  struct stat_stat_t *pcstat_sdists[MAX_PCSTAT_VARS];
@@ -480,16 +480,16 @@ public:
  char *pcstat_vars[MAX_PCSTAT_VARS];
  int bugcompat_mode;
  
- struct RUU_station *RUU;
+ struct RUU_station *RUU = NULL;
  int RUU_head, RUU_tail;
  int RUU_num;
- struct RUU_station *LSQ; 
+ struct RUU_station *LSQ = NULL; 
  int LSQ_head, LSQ_tail;  
  int LSQ_num;  
- struct RS_link *rslink_free_list;
+ struct RS_link *rslink_free_list = NULL;
  struct RS_link RSLINK_NULL;
- struct RS_link *event_queue;
- struct RS_link *ready_queue;
+ struct RS_link *event_queue = NULL;
+ struct RS_link *ready_queue = NULL;
  struct CV_link CVLINK_NULL;
  #define BITMAP_SIZE(BITS)	(((BITS)+31)/32)
 #define BITMAP_TYPE(BITS, NAME)	unsigned int (NAME)[BITMAP_SIZE(BITS)]
