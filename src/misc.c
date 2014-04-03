@@ -1107,7 +1107,7 @@ gzopen(char *fname, char *type)
   else
     {
       /* open pipe to compressor/decompressor */
-      sprintf(str, cmd, GZIP_PATH, fname);
+      //sprintf(str, cmd, GZIP_PATH, fname);
       fd = popen(str, type);
     }
 
