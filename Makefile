@@ -404,7 +404,7 @@ cheetah libcheetah/libcheetah.$(LEXT): sysprobe$(EEXT)
 	$(MAKE) "MAKE=$(MAKE)" "CC=$(CC)" "AR=$(AR)" "AROPT=$(AROPT)" "RANLIB=$(RANLIB)" "CFLAGS=$(MFLAGS) $(FFLAGS) $(OFLAGS)" "OEXT=$(OEXT)" "LEXT=$(LEXT)" "EEXT=$(EEXT)" "X=$(X)" "RM=$(RM)" libcheetah.$(LEXT)
 
 .c.$(OEXT):
-	g++  $(CFLAGS) -c $*.c -std=c++0x
+	gcc  $(CFLAGS) -c $*.c -std=c++0x
 .cpp.$(OEXT):
 	g++ $(CFLAGS) -c $*.cpp -lstdc++
 filelist:

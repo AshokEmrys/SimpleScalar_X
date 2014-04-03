@@ -58,6 +58,9 @@
 #include <string.h>
 #include <sys/types.h>
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* boolean value defs */
 #ifndef TRUE
 #define TRUE 1
@@ -255,5 +258,7 @@ void gzclose(FILE *fd);
 
 /* update the CRC on the data block one byte at a time */
 word_t crc(word_t crc_accum, word_t data);
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* MISC_H */

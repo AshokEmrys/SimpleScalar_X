@@ -52,6 +52,7 @@
 #ifndef SYSCALL_H
 #define SYSCALL_H
 
+
 #include <sys/types.h>
 #ifdef _MSC_VER
 #include <time.h>
@@ -62,7 +63,9 @@
 #include "host.h"
 #include "misc.h"
 #include "machine.h"
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /*
  * This module implements the system call portion of the SimpleScalar
  * instruction set architecture.  The system call definitions are borrowed
@@ -95,5 +98,7 @@ sys_syscall(struct regs_t *regs,	/* registers to access */
 	    struct mem_t *mem,		/* memory space to access */
 	    md_inst_t inst,		/* system call inst */
 	    int traceable);		/* traceable system call? */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* SYSCALL_H */
