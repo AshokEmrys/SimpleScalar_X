@@ -1,0 +1,21 @@
+gcc `./sysprobe -flags` -DDEBUG -O0 -g -w    -c sim-outorder.cpp -lstdc++
+gcc `./sysprobe -flags` -DDEBUG -O0 -g -w    -c cache.cpp -lstdc++
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c bpred.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c resource.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c ptrace.c
+gcc `./sysprobe -flags` -DDEBUG -O0 -g -w    -c main.cpp -lstdc++
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c syscall.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c memory.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c regs.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c loader.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c endian.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c dlite.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c symbol.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c eval.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c options.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c stats.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c eio.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c range.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c misc.c
+gcc  `./sysprobe -flags` -DDEBUG -O0 -g -w    -c machine.c
+gcc  -o sim-outorder -w  `./sysprobe -flags` -DDEBUG -O0 -g -w    sim-outorder.o cache.o bpred.o resource.o ptrace.o main.o syscall.o memory.o regs.o loader.o endian.o dlite.o symbol.o eval.o options.o stats.o eio.o range.o misc.o machine.o libexo/libexo.a `./sysprobe -libs` -lm
