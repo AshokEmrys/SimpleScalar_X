@@ -223,7 +223,7 @@ extern md_inst_t MD_NOP_INST;
 
 /* returns the opcode field value of SimpleScalar instruction INST */
 #define MD_OPFIELD(INST)		(INST.a & 0xff)
-#define MD_SET_OPCODE(OP, INST)	((OP) = (enum md_opcode)((INST).a & 0xff))
+#define MD_SET_OPCODE(OP, INST)	((OP) = (enum md_opcode) ((INST).a & 0xff))
 
 /* largest opcode field value (currently upper 8-bit are used for pre/post-
    incr/decr operation specifiers */

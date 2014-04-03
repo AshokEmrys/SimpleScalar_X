@@ -66,7 +66,7 @@ mem_create(char *name)			/* name of the memory space */
 {
   struct mem_t *mem;
 
-  mem = (mem_t*) calloc(1, sizeof(struct mem_t));
+  mem = (struct mem_t*) calloc(1, sizeof(struct mem_t));
   if (!mem)
     fatal("out of virtual memory");
 
@@ -120,7 +120,7 @@ mem_newpage(struct mem_t *mem,		/* memory space to allocate in */
     fatal("out of virtual memory");
 
   /* generate a new PTE */
-  pte = (mem_pte_t*) calloc(1, sizeof(struct mem_pte_t));
+  pte = (struct mem_pte_t*) calloc(1, sizeof(struct mem_pte_t));
   if (!pte)
     fatal("out of virtual memory");
   pte->tag = MEM_PTAB_TAG(addr);

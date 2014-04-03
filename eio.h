@@ -53,7 +53,9 @@
 #define EIO_H
 
 #include <stdio.h>
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* EIO file formats */
 #define EIO_PISA_FORMAT			1
 #define EIO_ALPHA_FORMAT		2
@@ -108,5 +110,9 @@ eio_read_trace(FILE *eio_fd,			/* EIO stream file desc */
 
 /* fast forward EIO trace EIO_FD to the transaction just after ICNT */
 void eio_fast_forward(FILE *eio_fd, counter_t icnt);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* EIO_H */

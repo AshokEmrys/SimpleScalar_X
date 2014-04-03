@@ -60,6 +60,9 @@
 #define ECOFF_EL_OTHER		0x6201
 #define ECOFF_ALPHAMAGIC	0603
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
 struct ecoff_filehdr {
   half_t f_magic;
   half_t f_nscns;
@@ -216,5 +219,9 @@ typedef struct ecoff_EXTR {
 #define ECOFF_stForward		13
 #define ECOFF_stStaticProc	14
 #define ECOFF_stConstant	15
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ECOFF_H */

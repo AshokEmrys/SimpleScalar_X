@@ -51,7 +51,9 @@
 
 #ifndef BITMAP_H
 #define BITMAP_H
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* BITMAPs:
      BMAP: int * to an array of ints
      SZ: number of ints in the bitmap
@@ -138,6 +140,8 @@ typedef unsigned int *BITMAP_PTR_TYPE;
     }								\
   n;								\
 })
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* BITMAP_H */
 

@@ -42,6 +42,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/endian.o \
 	${OBJECTDIR}/eval.o \
 	${OBJECTDIR}/eventq.o \
+	${OBJECTDIR}/libexo/exo-test.o \
+	${OBJECTDIR}/libexo/libexo.o \
 	${OBJECTDIR}/loader.o \
 	${OBJECTDIR}/machine.o \
 	${OBJECTDIR}/main.o \
@@ -89,10 +91,10 @@ ${OBJECTDIR}/bpred.o: bpred.c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/bpred.o bpred.c
 
-${OBJECTDIR}/cache.o: cache.c 
+${OBJECTDIR}/cache.o: cache.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cache.o cache.c
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cache.o cache.cpp
 
 ${OBJECTDIR}/dlite.o: dlite.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -119,6 +121,16 @@ ${OBJECTDIR}/eventq.o: eventq.c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/eventq.o eventq.c
 
+${OBJECTDIR}/libexo/exo-test.o: libexo/exo-test.c 
+	${MKDIR} -p ${OBJECTDIR}/libexo
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libexo/exo-test.o libexo/exo-test.c
+
+${OBJECTDIR}/libexo/libexo.o: libexo/libexo.c 
+	${MKDIR} -p ${OBJECTDIR}/libexo
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/libexo/libexo.o libexo/libexo.c
+
 ${OBJECTDIR}/loader.o: loader.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -129,10 +141,10 @@ ${OBJECTDIR}/machine.o: machine.c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/machine.o machine.c
 
-${OBJECTDIR}/main.o: main.c 
+${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/memory.o: memory.c 
 	${MKDIR} -p ${OBJECTDIR}

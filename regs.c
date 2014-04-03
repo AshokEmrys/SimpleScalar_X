@@ -66,7 +66,7 @@ regs_create(void)
 {
   struct regs_t *regs;
 
-  regs = (regs_t*) calloc(1, sizeof(struct regs_t));
+  regs = (struct regs_t*) calloc(1, sizeof(struct regs_t));
   if (!regs)
     fatal("out of virtual memory");
 

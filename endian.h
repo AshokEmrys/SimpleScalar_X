@@ -51,7 +51,9 @@
 
 #ifndef ENDIAN_H
 #define ENDIAN_H
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* data swapping functions, from big/little to little/big endian format */
 #define SWAP_HALF(X)							\
   (((((half_t)(X)) & 0xff) << 8) | ((((half_t)(X)) & 0xff00) >> 8))
@@ -91,5 +93,7 @@ enum endian_t
 endian_target_word_order(void);
 
 #endif /* HOST_ONLY */
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* ENDIAN_H */

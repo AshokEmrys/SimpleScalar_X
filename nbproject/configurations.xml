@@ -46,15 +46,17 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>bpred.c</itemPath>
-      <itemPath>cache.c</itemPath>
+      <itemPath>cache.cpp</itemPath>
       <itemPath>dlite.c</itemPath>
       <itemPath>eio.c</itemPath>
       <itemPath>endian.c</itemPath>
       <itemPath>eval.c</itemPath>
       <itemPath>eventq.c</itemPath>
+      <itemPath>libexo/exo-test.c</itemPath>
+      <itemPath>libexo/libexo.c</itemPath>
       <itemPath>loader.c</itemPath>
       <itemPath>machine.c</itemPath>
-      <itemPath>main.c</itemPath>
+      <itemPath>main.cpp</itemPath>
       <itemPath>memory.c</itemPath>
       <itemPath>misc.c</itemPath>
       <itemPath>options.c</itemPath>
@@ -100,7 +102,7 @@
       </item>
       <item path="bpred.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="cache.c" ex="false" tool="0" flavor2="0">
+      <item path="cache.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="cache.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -128,6 +130,10 @@
       </item>
       <item path="host.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="libexo/exo-test.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="libexo/libexo.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="loader.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="loader.h" ex="false" tool="3" flavor2="0">
@@ -138,7 +144,7 @@
       </item>
       <item path="machine.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.c" ex="false" tool="0" flavor2="0">
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="memory.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -235,7 +241,7 @@
       </item>
       <item path="bpred.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="cache.c" ex="false" tool="0" flavor2="0">
+      <item path="cache.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="cache.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -263,6 +269,10 @@
       </item>
       <item path="host.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="libexo/exo-test.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="libexo/libexo.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="loader.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="loader.h" ex="false" tool="3" flavor2="0">
@@ -273,7 +283,7 @@
       </item>
       <item path="machine.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.c" ex="false" tool="0" flavor2="0">
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="memory.c" ex="false" tool="0" flavor2="0">
       </item>

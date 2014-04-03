@@ -1706,7 +1706,7 @@ set_break(int classM,				/* break classM, use ACCESS_* */
   struct dlite_break_t *bp;
 
   /* add breakpoint to break list */
-  bp = (dlite_break_t*) calloc(1, sizeof(struct dlite_break_t));
+  bp = (struct dlite_break_t*) calloc(1, sizeof(struct dlite_break_t));
   if (!bp)
     fatal("out of virtual memory");
 

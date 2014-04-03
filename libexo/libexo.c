@@ -269,7 +269,7 @@ intern_string(char *str)
   char *s, *istr;
 
   /* resulting string cannot be longer than STR */
-  s = istr = malloc(strlen(str)+1);
+  s = istr = (char*) malloc(strlen(str)+1);
 
   if (!str || !*str || *str != '\"') /* " */
     panic("mal-formed string constant");
@@ -499,7 +499,7 @@ exo_new(enum exo_class_t ec, ...)
 	data = va_arg(v, unsigned char *);
 
 	exo->as_blob.size = size;
-	exo->as_blob.data = malloc(size);
+	exo->as_blob.data = (unsigned char*) malloc(size);
 	if (data != NULL)
 	  memcpy(exo->as_blob.data, data, size);
 	else
@@ -670,7 +670,7 @@ exo_copy(struct exo_term_t *exo)
       break;
 
     case ec_blob:
-      new_exo->as_blob.data = malloc(new_exo->as_array.size);
+      new_exo->as_blob.data = (unsigned char* ) malloc(new_exo->as_array.size);
       memcpy(new_exo->as_blob.data, exo->as_blob.data, new_exo->as_array.size);
       break;
 
@@ -736,7 +736,7 @@ exo_deepcopy(struct exo_term_t *exo)
       break;
 
     case ec_blob:
-      new_exo->as_blob.data = malloc(new_exo->as_array.size);
+      new_exo->as_blob.data = (unsigned char*) malloc(new_exo->as_array.size);
       memcpy(new_exo->as_blob.data, exo->as_blob.data, new_exo->as_array.size);
       break;
 

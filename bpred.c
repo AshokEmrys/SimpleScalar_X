@@ -77,7 +77,7 @@ bpred_create(enum bpred_class classM,	/* type of predictor to create */
 {
   struct bpred_t *pred;
 
-  if (!(pred = (bpred_t*) calloc(1, sizeof(struct bpred_t))))
+  if (!(pred = (struct bpred_t*) calloc(1, sizeof(struct bpred_t))))
     fatal("out of virtual memory");
 
   pred->classM = classM;
@@ -131,7 +131,7 @@ bpred_create(enum bpred_class classM,	/* type of predictor to create */
       if (!btb_assoc || (btb_assoc & (btb_assoc-1)) != 0)
 	fatal("BTB associativity must be non-zero and a power of two");
 
-      if (!(pred->btb.btb_data = (bpred_btb_ent_t*) calloc(btb_sets * btb_assoc,
+      if (!(pred->btb.btb_data = (struct bpred_btb_ent_t*) calloc(btb_sets * btb_assoc,
 					sizeof(struct bpred_btb_ent_t))))
 	fatal("cannot allocate BTB");
 
@@ -156,7 +156,7 @@ bpred_create(enum bpred_class classM,	/* type of predictor to create */
       
       pred->retstack.size = retstack_size;
       if (retstack_size)
-	if (!(pred->retstack.stack = (bpred_btb_ent_t*) calloc(retstack_size, 
+	if (!(pred->retstack.stack = (struct bpred_btb_ent_t*) calloc(retstack_size, 
 					    sizeof(struct bpred_btb_ent_t))))
 	  fatal("cannot allocate return-address-stack");
       pred->retstack.tos = retstack_size - 1;
@@ -189,7 +189,7 @@ bpred_dir_create (
   unsigned int cnt;
   int flipflop;
 
-  if (!(pred_dir = (bpred_dir_t*)  calloc(1, sizeof(struct bpred_dir_t))))
+  if (!(pred_dir = (struct bpred_dir_t*)  calloc(1, sizeof(struct bpred_dir_t))))
     fatal("out of virtual memory");
 
   pred_dir->classM = classM;

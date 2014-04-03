@@ -118,6 +118,9 @@
 #include "memory.h"
 #include "eval.h"
 
+#ifdef __cplusplus 
+extern "C" {
+#endif
 /* DLite register access function, the debugger uses this function to access
    simulator register state */
 typedef char *					/* error str, NULL if none */
@@ -204,5 +207,7 @@ dlite_main(md_addr_t regs_PC,			/* addr of last inst to exec */
 	   counter_t cycle,			/* current processor cycle */
 	   struct regs_t *regs,			/* registers to access */
 	   struct mem_t *mem);			/* memory to access */
-
+#ifdef __cplusplus 
+extern "C" {
+#endif
 #endif /* DLITE_H */

@@ -118,6 +118,8 @@ fatal(char *fmt, ...);
 void
 _panic(char *file, const char *func, int line, char *fmt, ...)
 __attribute__ ((noreturn));
+
+
 #else /* !__GNUC__ */
 void
 panic(char *fmt, ...);
