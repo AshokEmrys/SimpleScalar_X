@@ -66,7 +66,7 @@ stat_eval_ident(struct eval_state_t *es)/* an expression evaluator */
 {
   struct stat_sdb_t *sdb = es->user_ptr;
   struct stat_stat_t *stat;
-  static struct eval_value_t err_value = { et_int, { 0 } };
+  /* PxFk static*/ struct eval_value_t err_value = { et_int, { 0 } };
   struct eval_value_t val;
 
   /* locate the stat variable */

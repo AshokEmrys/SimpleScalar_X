@@ -399,7 +399,7 @@ public:
  unsigned int max_insts;
  int fastfwd_count;
  int ptrace_nelt;
- char *ptrace_opts[2];
+ char *ptrace_opts[2]={NULL, NULL};
  int ruu_ifq_size;
  int ruu_branch_penalty;
  int fetch_speed;

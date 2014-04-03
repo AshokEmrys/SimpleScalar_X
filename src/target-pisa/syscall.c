@@ -632,6 +632,7 @@ sys_syscall(struct regs_t *regs,	/* registers to access */
     {
     case SS_SYS_exit:
       /* exit jumps to the target set in main() */
+    fprintf(stderr,"\n\n\n\n#####EXIT#######");
       longjmp(sim_exit_buf, /* exitcode + fudge */regs->regs_R[4]+1);
       break;
 
