@@ -505,12 +505,12 @@ public:
  BITMAP_TYPE(MD_NUM_FREGS, use_spec_C);
  md_ctrl_t spec_regs_C;
  struct spec_mem_ent *store_htable[STORE_HASH_SIZE];
- struct spec_mem_ent *bucket_free_list;
+ struct spec_mem_ent *bucket_free_list = NULL;
  md_addr_t pred_PC;
  md_addr_t recover_PC;
  md_addr_t fetch_regs_PC;
  md_addr_t fetch_pred_PC;
- struct fetch_rec *fetch_data;
+ struct fetch_rec *fetch_data = NULL;
  int fetch_num;
  int fetch_tail, fetch_head;
  struct RS_link last_op;
