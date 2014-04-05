@@ -19,6 +19,11 @@
 
 #include "cache.h"
 
+//Static member init
+
+ struct mem_t *simoutorder::mem = NULL;
+ bool simoutorder::isMemInit = false;
+ bool simoutorder::isProgLoad = false;
 struct res_desc fu_config[] = {
   {
     "integer-ALU",

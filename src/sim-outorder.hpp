@@ -396,10 +396,10 @@ class simoutorder
 public:
 
 /*PX's Custom for multithreading*/
-static bool isMemInit = false;
-static bool isProgLoad = false;
+static bool isMemInit;
+static bool isProgLoad;
  struct regs_t regs;
- static struct mem_t *mem = NULL;
+ static struct mem_t *mem;
  unsigned int max_insts;
  int fastfwd_count;
  int ptrace_nelt;

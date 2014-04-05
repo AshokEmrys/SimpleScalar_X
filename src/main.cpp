@@ -346,7 +346,7 @@ exec_index = -1;
   bfd_init();
 #endif /* BFD_LOADER */
 
-
+ 
 
   /* initialize all simulation modules */
   in_simobj->sim_init();
