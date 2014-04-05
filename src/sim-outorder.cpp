@@ -857,8 +857,11 @@ simoutorder::sim_init(void)
 {
   sim_num_refs = 0;
   regs_init(&regs);
-  mem = mem_create("mem");
-  mem_init(mem);
+  if(!isMemInit)
+  {
+   mem = mem_create("mem");
+   mem_init(mem);
+  }
 }
 
 void
@@ -866,7 +869,10 @@ simoutorder::sim_load_prog(char *fname,
 	      int argc, char **argv,	
 	      char **envp)		
 {
+if(!isProgLoad)
+{
   ld_load_prog(fname, argc, argv, envp, &regs, mem, TRUE);
+}
   if (ptrace_nelt == 2)
     {
       ptrace_open(ptrace_opts[0], ptrace_opts[1]);
@@ -2540,61 +2546,7 @@ simoutorder::sim_main(void)
 	       sim_cycle, &regs, mem);
   if (fastfwd_count > 0)
     {
-      int icount;
-      md_inst_t inst;			
-      enum md_opcode op;		
-      md_addr_t target_PC;		
-      md_addr_t addr;			
-      int is_write;			
-      byte_t temp_byte = 0;		
-      half_t temp_half = 0;		
-      word_t temp_word = 0;		
-#ifdef HOST_HAS_QWORD
-      qword_t temp_qword = 0;		
-#endif 
-      enum md_fault_type fault;
-      fprintf(stderr, "sim: ** fast forwarding %d insts **\n", fastfwd_count);
-      for (icount=0; icount < fastfwd_count; icount++)
-	{
-	  regs.regs_R[MD_REG_ZERO] = 0;
-#ifdef TARGET_ALPHA
-	  regs.regs_F.d[MD_REG_ZERO] = 0.0;
-#endif 
-	  MD_FETCH_INST(inst, mem, regs.regs_PC);
-	  addr = 0; is_write = FALSE;
-	  fault = md_fault_none;
-	  MD_SET_OPCODE(op, inst);
-	  switch (op)
-	    {
-#define DEFINST(OP,MSK,NAME,OPFORM,RES,FLAGS,O1,O2,I1,I2,I3)		\
-	    case OP:							\
-	      SYMCAT(OP,_IMPL);						\
-	      break;
-#define DEFLINK(OP,MSK,NAME,MASK,SHIFT)					\
-	    case OP:							\
-	      panic("attempted to execute a linking opcode");
-#define CONNECT(OP)
-#undef DECLARE_FAULT
-#define DECLARE_FAULT(FAULT)						\
-	      { fault = (FAULT); break; }
-#include "machine.def"
-	    default:
-	      panic("attempted to execute a bogus opcode");
-	    }
-	  if (fault != md_fault_none)
-	    fatal("fault (%d) detected @ 0x%08p", fault, regs.regs_PC);
-	  if (MD_OP_FLAGS(op) & F_MEM)
-	    {
-	      if (MD_OP_FLAGS(op) & F_STORE)
-		is_write = TRUE;
-	    }
-	  if (dlite_check_break(regs.regs_NPC,
-				is_write ? ACCESS_WRITE : ACCESS_READ,
-				addr, sim_num_insn, sim_num_insn))
-	    dlite_main(regs.regs_PC, regs.regs_NPC, sim_num_insn, &regs, mem);
-	  regs.regs_PC = regs.regs_NPC;
-	  regs.regs_NPC += sizeof(md_inst_t);
-	}
+   fprintf(stderr, "\nPanic! Fast forwarding is disabled\n");
     }
   fprintf(stderr, "sim: ** starting performance simulation **\n");
   fetch_regs_PC = regs.regs_PC - sizeof(md_inst_t);

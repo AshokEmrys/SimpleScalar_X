@@ -4,4 +4,21 @@
         <activeConfTypeElem>1</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/stats.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/sim-outorder.cpp</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/options.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/eio.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/symbol.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/sim-outorder.hpp</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/machine.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/target-pisa/pisa.def</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/dlite.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/target-pisa/syscall.c</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/main.cpp</file>
+            <file>file:/home/x/pwd/local/netbeans/SimpleScalar/src/sim.h</file>
+        </group>
+    </open-files>
 </project-private>

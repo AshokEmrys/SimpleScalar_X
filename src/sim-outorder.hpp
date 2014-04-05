@@ -394,8 +394,12 @@ struct fetch_rec {
 class simoutorder
 {
 public:
+
+/*PX's Custom for multithreading*/
+static bool isMemInit = false;
+static bool isProgLoad = false;
  struct regs_t regs;
- struct mem_t *mem = NULL;
+ static struct mem_t *mem = NULL;
  unsigned int max_insts;
  int fastfwd_count;
  int ptrace_nelt;

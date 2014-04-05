@@ -224,7 +224,7 @@ exit_now(int exit_code, simoutorder *simobj)
   simobj->sim_uninit();
 
   /* all done! */
-  exit(exit_code);
+  //exit(exit_code);
 }
 int init(struct stat_sdb_t* &in_statdb, 
          struct opt_odb_t* &in_optdb,
@@ -383,6 +383,7 @@ simoutorder sim1, sim2;
     {
       /* special handling as longjmp cannot pass 0 */
       exit_now(exit_code-1, &sim1);
+      goto sim2ex;
     }
   
   
@@ -408,7 +409,13 @@ simoutorder sim1, sim2;
          argv,
          envp
          );
-
+ init(sim_sdb2, 
+         sim_odb2,
+         &sim2,
+         argc,
+         argv,
+         envp
+         );
   /* record start of execution time, used in rate stats */
   sim_start_time = time((time_t *)NULL);
 
@@ -436,6 +443,11 @@ simoutorder sim1, sim2;
   running = TRUE;
  
   sim1.sim_main();
+  running = TRUE;     
+  
+  
+  sim2ex:
+  sim2.sim_main();
 
   /* simulation finished early */
   exit_now(0, &sim1);
