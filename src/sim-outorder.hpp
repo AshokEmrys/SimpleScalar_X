@@ -55,24 +55,58 @@
 
 enum proc_type {OCore = 0, RCore};
 
+typedef struct memory_avail_list
+{
+ md_addr_t addr = 0;
+ unsigned int cnt = 0;
+ struct memory_avail_list* nxtptr;
+ struct memory_avail_list* prvptr;
+ memory_avail_list()
+ : nxtptr(this), prvptr(this)
+ { }
+ int insert(memory_avail_list*);
+ int release();
+}memAvailLst;
+
+typedef enum _data_type { byte = 1, hword = 2, word = 4 , qword = 8} data_type;
+typedef struct buffer_memory
+{
+ md_addr_t strt_addr = 0;
+ md_addr_t end_addr = 0; 
+ data_type datType = byte;
+ byte_t* data;
+ struct buffer_memory* nxtptr;
+ struct buffer_memory* prvptr;
+ buffer_memory()
+ : nxtptr(this), prvptr(this)
+ { }
+ int insert(buffer_memory*);
+ int release();
+}bufMem;
+
 #define OCORE (enum proc_type)(0)
 #define RCORE (enum proc_type)(1)
-/*PX's Mod*/
-
-
 
  #define __READ_SPECMEM(SRC, SRC_V, FAULT)				\
    (addr = (SRC),							\
     (spec_mode								\
      ? ((FAULT) = spec_mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))\
-     : ((FAULT) = mem_access_mod(mem, Read, addr, &SRC_V, sizeof(SRC_V)))),	\
+     : ((FAULT) = mem_access_mod(mem, Read, addr, &SRC_V, sizeof(SRC_V), regs.regs_PC))),	\
     SRC_V)
 
  #define __WRITE_SPECMEM(SRC, DST, DST_V, FAULT)				\
    (DST_V = (SRC), addr = (DST),						\
     (spec_mode								\
      ? ((FAULT) = spec_mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))\
-     : ((FAULT) = mem_access_mod(mem, Write, addr, &DST_V, sizeof(DST_V)))))
+     : ((FAULT) = mem_access_mod(mem, Write, addr, &DST_V, sizeof(DST_V), regs.regs_PC))))
+
+
+
+/*PX's Mod END*/
+
+
+
+
 
 
 
@@ -428,8 +462,14 @@ public:
 /*PX's Custom for multithreading*/
 struct stat_sdb_t *sim_sdb;
 proc_type procType;
+memAvailLst buffer_avail_list;
+bufMem buffer_memory;
+counter_t bufHit = 0;
+
 static bool isMemInit;
 static bool isProgLoad;
+
+/*PX's Custom END*/
  struct regs_t regs;
  static struct mem_t *mem;
  unsigned int max_insts;
@@ -758,16 +798,34 @@ simoo_mstate_obj(FILE *stream,
 void
 sim_main(void);
 
+/*PX Custom access*/
 
  enum md_fault_type
 mem_access_mod(struct mem_t *mem,	
 	   enum mem_cmd cmd,	
 	   md_addr_t addr,
 	   void *vp,
-	   int nbytes);
+	   int nbytes, 
+     md_addr_t PC);
  
  int simInit();
+ 
 simoutorder(enum proc_type in_procType);
+
+enum md_fault_type cond_mem_access(enum mem_cmd cmd, 
+                   md_addr_t addr,
+                   void *dp, 
+                   int nbytes, 
+                   md_addr_t PC);
+memAvailLst* chk_buf_avail(md_addr_t addr);
+
+int buf_read(md_addr_t addr,
+                 void *dp, 
+                 int nbytes);
+
+
+
+/* PX Custom End */
 };
 
 #endif	/* SIM_OUTRDER_HPP */

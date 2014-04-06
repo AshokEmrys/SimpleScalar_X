@@ -2605,15 +2605,21 @@ simoutorder::sim_main(void)
 
 enum md_fault_type
 simoutorder::mem_access_mod(struct mem_t *mem,		/* memory space to access */
-	   enum mem_cmd cmd,		/* Read (from sim mem) or Write */
-	   md_addr_t addr,		/* target address to access */
-	   void *vp,			/* host memory address to access */
-	   int nbytes)			/* number of bytes to access */
+	                          enum mem_cmd cmd,		/* Read (from sim mem) or Write */
+                            md_addr_t addr,		/* target address to access */
+                            void *vp,			/* host memory address to access */
+                            int nbytes, 
+                            md_addr_t PC)			/* number of bytes to access */
 {
 switch(procType)
 {
  case OCore:
-        panic("pnding");
+        //panic("pending");
+        return cond_mem_access(cmd, 
+                   addr,
+                   vp, 
+                   nbytes, 
+                   PC);
         break;
  case RCore:
       return  mem_access(mem,
@@ -2625,4 +2631,200 @@ switch(procType)
  default:
       panic("Unknown Processor type in PX's Mod");
 }
+}
+
+memAvailLst* simoutorder::chk_buf_avail(md_addr_t addr)
+{
+ memAvailLst *iter = buffer_avail_list.nxtptr;
+ while(iter != &buffer_avail_list)
+ {
+  if(addr == iter->addr)
+  {
+   return iter;
+  }
+  iter = iter->nxtptr;
+ }
+ return NULL;
+}
+
+ enum md_fault_type 
+ simoutorder::cond_mem_access(enum mem_cmd cmd, 
+                   md_addr_t addr,
+                   void *dp, 
+                   int nbytes, 
+                   md_addr_t PC)
+{
+
+memAvailLst* list_loc;
+byte_t* ptr = (byte_t*)dp;
+int rdcnt;
+switch(cmd)
+{
+ case Read:
+ {
+ int isBufHit = false;
+ for(int i = 0; i < nbytes;)
+ {
+  list_loc = chk_buf_avail(addr);
+  if(list_loc != NULL)
+  {
+    rdcnt= buf_read(addr, ptr, nbytes - 0);
+    ptr += rdcnt*sizeof(byte_t);
+    addr += rdcnt*sizeof(byte_t);
+    i += rdcnt;
+    isBufHit = true;
+  }
+  else
+  {
+   *((byte_t *)ptr) = MEM_READ_BYTE(mem, addr);
+   ptr += sizeof(byte_t);
+   ++i;
+  }
+  if(isBufHit)
+  {
+   ++bufHit;
+  }
+ }
+ break;
+ }
+ case Write:
+ {
+ if(nbytes % 2 != 0)
+ {
+  panic("data size not bounded");
+ }
+ if(nbytes > sizeof(qword_t))
+ {
+  panic("data larger than qword");
+ }
+ 
+ bufMem* tmpbufLoc = new(bufMem);
+ if(tmpbufLoc == NULL)
+ {
+  panic("out of virtual memory");
+ }
+ 
+ tmpbufLoc->strt_addr = addr;
+ tmpbufLoc->end_addr = addr + (nbytes - 1)* sizeof(byte_t);
+ tmpbufLoc->data = new(byte_t[nbytes]);
+ tmpbufLoc->datType = (data_type)nbytes;
+ 
+ tmpbufLoc->insert(&buffer_memory);
+ for(int i = 0; i < nbytes * sizeof(byte_t);)
+ {
+  list_loc = chk_buf_avail(addr);
+  if(list_loc == NULL)
+  {
+   list_loc = new(memAvailLst);
+   if(list_loc == NULL)
+   {
+    panic("out of virtual memory");
+   }
+   list_loc->insert(&buffer_avail_list);
+   ++list_loc->cnt;
+  }
+  else
+  {
+   ++list_loc->cnt;
+  }
+  tmpbufLoc->data[i] = byte_t(*((byte_t*)dp));
+  dp += sizeof(byte_t);
+	addr += sizeof(byte_t);
+  i += sizeof(byte_t);
+ }
+ break;
+ }
+}
+return md_fault_none;
+}
+
+int simoutorder::buf_read(md_addr_t addr,
+                 void *dp, 
+                 int nbytes)
+{
+bufMem *iter = buffer_memory.prvptr;
+while(iter != &buffer_memory)
+{
+ if(addr >= iter->strt_addr
+     &&
+    addr <= iter->end_addr
+    )
+ {
+  byte_t pos = addr - iter->strt_addr;
+  byte_t end = iter->end_addr;
+  if(pos != 0)
+  {
+   pos /= sizeof(byte_t);
+  }
+  if(end != 0)
+  {
+   end /= sizeof(byte_t);
+  }
+  while(pos <= end)
+  {
+   *((byte_t*)(dp + pos)) = (byte_t)(iter->data[pos]);
+   pos += sizeof(byte_t);
+  }
+  return end+1;
+ }
+ iter = iter->prvptr;
+}
+panic("buf memory read, addr not found, chk mis calculation!");
+return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Structure function
+
+int buffer_memory::insert(buffer_memory* root)
+{
+this->nxtptr = root;
+this->prvptr = root->prvptr;
+this->prvptr->nxtptr = this;
+root->prvptr = this;
+return 0;
+}
+
+int buffer_memory::release()
+{
+this->prvptr->nxtptr = this->nxtptr;
+this->nxtptr->prvptr = this->prvptr;
+return 0;
+}
+
+int memory_avail_list::insert(memory_avail_list* root)
+{
+this->nxtptr = root;
+this->prvptr = root->prvptr;
+this->prvptr->nxtptr = this;
+root->prvptr = this;
+return 0;
+}
+
+
+int memory_avail_list::release()
+{
+this->prvptr->nxtptr = this->nxtptr;
+this->nxtptr->prvptr = this->prvptr;
+return 0;
 }

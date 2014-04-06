@@ -377,7 +377,7 @@ main(int argc, char **argv, char **envp)
 {
   char *s;
   int i, exit_code;
-simoutorder sim1(RCORE), sim2;
+simoutorder sim1(RCORE), sim2(OCORE);
 #ifndef _MSC_VER
   /* catch SIGUSR1 and dump intermediate stats */
   signal(SIGUSR1, signal_sim_stats);
