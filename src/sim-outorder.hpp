@@ -51,11 +51,31 @@
 
 
 
+/*PX Custom Impl*/
+
+enum proc_type {OCore = 0, RCore};
+
+#define OCORE (enum proc_type)(0)
+#define RCORE (enum proc_type)(1)
+/*PX's Mod*/
 
 
 
-void
-sim_print_stats(FILE *fd);
+ #define __READ_SPECMEM(SRC, SRC_V, FAULT)				\
+   (addr = (SRC),							\
+    (spec_mode								\
+     ? ((FAULT) = spec_mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))\
+     : ((FAULT) = mem_access_mod(mem, Read, addr, &SRC_V, sizeof(SRC_V)))),	\
+    SRC_V)
+
+ #define __WRITE_SPECMEM(SRC, DST, DST_V, FAULT)				\
+   (DST_V = (SRC), addr = (DST),						\
+    (spec_mode								\
+     ? ((FAULT) = spec_mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))\
+     : ((FAULT) = mem_access_mod(mem, Write, addr, &DST_V, sizeof(DST_V)))))
+
+
+
 
 
 
@@ -282,12 +302,16 @@ sim_print_stats(FILE *fd);
 #else
 #error No ISA target defined...
 #endif
+
+/*PX Mod
 #define __READ_SPECMEM(SRC, SRC_V, FAULT)				\
   (addr = (SRC),							\
    (spec_mode								\
     ? ((FAULT) = spec_mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))\
     : ((FAULT) = mem_access(mem, Read, addr, &SRC_V, sizeof(SRC_V)))),	\
    SRC_V)
+
+*/
 #define READ_BYTE(SRC, FAULT)						\
   __READ_SPECMEM((SRC), temp_byte, (FAULT))
 #define READ_HALF(SRC, FAULT)						\
@@ -298,11 +322,13 @@ sim_print_stats(FILE *fd);
 #define READ_QWORD(SRC, FAULT)						\
   MD_SWAPQ(__READ_SPECMEM((SRC), temp_qword, (FAULT)))
 #endif 
+/*PX Mod
 #define __WRITE_SPECMEM(SRC, DST, DST_V, FAULT)				\
   (DST_V = (SRC), addr = (DST),						\
    (spec_mode								\
     ? ((FAULT) = spec_mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))\
     : ((FAULT) = mem_access(mem, Write, addr, &DST_V, sizeof(DST_V)))))
+ * */
 #define WRITE_BYTE(SRC, DST, FAULT)					\
   __WRITE_SPECMEM((SRC), (DST), temp_byte, (FAULT))
 #define WRITE_HALF(SRC, DST, FAULT)					\
@@ -327,7 +353,11 @@ typedef unsigned int INST_SEQ_TYPE;
 
 
 
+
+
+
 struct RUU_station {
+  
   md_inst_t IR;			
   enum md_opcode op;			
   md_addr_t PC, next_PC, pred_PC;	
@@ -396,6 +426,8 @@ class simoutorder
 public:
 
 /*PX's Custom for multithreading*/
+struct stat_sdb_t *sim_sdb;
+proc_type procType;
 static bool isMemInit;
 static bool isProgLoad;
  struct regs_t regs;
@@ -523,7 +555,7 @@ static bool isProgLoad;
  
  
  
- 
+
  simoutorder();
  unsigned int mem_access_latency(int blk_sz);
  
@@ -727,7 +759,15 @@ void
 sim_main(void);
 
 
+ enum md_fault_type
+mem_access_mod(struct mem_t *mem,	
+	   enum mem_cmd cmd,	
+	   md_addr_t addr,
+	   void *vp,
+	   int nbytes);
  
+ int simInit();
+simoutorder(enum proc_type in_procType);
 };
 
 #endif	/* SIM_OUTRDER_HPP */

@@ -77,6 +77,12 @@
 #include "sim.h"
 #include "sim-outorder.hpp"
 
+
+/*PX Custome impl*/
+
+bool isSim1Run = false;
+bool isSim2Run = false;
+
 /* stats signal handler */
 static void
 signal_sim_stats(int sigtype)
@@ -188,7 +194,7 @@ static int running = FALSE;
 
 /* print all simulator stats */
 void
-sim_print_stats(FILE *fd)		/* output stream */
+sim_print_stats(FILE *fd, simoutorder *in_objSim)		/* output stream */
 {
 #if 0 /* not portable... :-( */
   extern char etext, *sbrk(int);
@@ -208,9 +214,14 @@ sim_print_stats(FILE *fd)		/* output stream */
 
   /* print simulation stats */
   fprintf(fd, "\nsim: ** simulation statistics **\n");
-  stat_print_stats(sim_sdb, fd);
+  stat_print_stats(in_objSim->sim_sdb, fd);
   //sim_aux_stats(fd);
   fprintf(fd, "\n");
+}
+void
+sim_print_stats_prev(FILE *fd)
+{
+fprintf(stderr,"\n\n\n###### FATAL HOOK ######## \n\n\n");
 }
 
 /* print stats, uninitialize simulator components, and exit w/ exitcode */
@@ -218,16 +229,16 @@ static void
 exit_now(int exit_code, simoutorder *simobj)
 {
   /* print simulation stats */
-  sim_print_stats(stderr);
+  sim_print_stats(stderr, simobj);
 
   /* un-initialize the simulator */
+
   simobj->sim_uninit();
 
   /* all done! */
   //exit(exit_code);
 }
-int init(struct stat_sdb_t* &in_statdb, 
-         struct opt_odb_t* &in_optdb,
+int init(struct opt_odb_t* &in_optdb,
          simoutorder* in_simobj,
          int argc,
          char** argv,
@@ -355,8 +366,8 @@ exec_index = -1;
   in_simobj->sim_load_prog(argv[exec_index], argc-exec_index, argv+exec_index, envp);
  
   /* register all simulator stats */
-  in_statdb = stat_new();
-  in_simobj->sim_reg_stats(in_statdb);
+  in_simobj->sim_sdb = stat_new();
+  in_simobj->sim_reg_stats(in_simobj->sim_sdb);
   
   return 1;
   
@@ -366,7 +377,7 @@ main(int argc, char **argv, char **envp)
 {
   char *s;
   int i, exit_code;
-simoutorder sim1, sim2;
+simoutorder sim1(RCORE), sim2;
 #ifndef _MSC_VER
   /* catch SIGUSR1 and dump intermediate stats */
   signal(SIGUSR1, signal_sim_stats);
@@ -376,14 +387,28 @@ simoutorder sim1, sim2;
 #endif /* _MSC_VER */
 
   /* register an error handler */
-  fatal_hook(sim_print_stats);
+  fatal_hook(sim_print_stats_prev);
 
   /* set up a non-local exit point */
   if ((exit_code = setjmp(sim_exit_buf)) != 0)
     {
       /* special handling as longjmp cannot pass 0 */
-      exit_now(exit_code-1, &sim1);
-      goto sim2ex;
+   if(isSim1Run)
+   {
+    exit_now(exit_code-1, &sim1);
+    isSim1Run = false;
+    goto sim2ex;
+   }
+   else if(isSim2Run)
+   {
+   exit_now(exit_code-1, &sim2);
+   isSim2Run = false;
+   exit(0);
+   }
+   else
+   {
+    fprintf(stderr, "\n\n fatal error during exit\n");
+   }
     }
   
   
@@ -402,15 +427,13 @@ simoutorder sim1, sim2;
   /* initialize the instruction decoder */
   md_init_decoder();
 
-  init(sim_sdb, 
-         sim_odb,
+  init(  sim_odb,
          &sim1,
          argc,
          argv,
          envp
          );
- init(sim_sdb2, 
-         sim_odb2,
+ init(  sim_odb2,
          &sim2,
          argc,
          argv,
@@ -441,12 +464,14 @@ simoutorder sim1, sim2;
     exit_now(0, &sim1);
 
   running = TRUE;
+  isSim1Run = true;
  
   sim1.sim_main();
   running = TRUE;     
   
   
   sim2ex:
+  isSim2Run = true;
   sim2.sim_main();
 
   /* simulation finished early */

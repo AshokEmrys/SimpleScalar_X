@@ -77,7 +77,7 @@ struct res_desc fu_config[] = {
 
 /*Sim Outorder classM Definition*/
 
-simoutorder::simoutorder()
+int simoutorder::simInit()
 {
 mem = NULL;
 ptrace_nelt = 0;
@@ -106,9 +106,19 @@ ptrace_seq = 0;
 ruu_fetch_issue_delay = 0;
 pred_perfect = FALSE;
 fu_pool = NULL;
+return 0;
 }
 
+simoutorder::simoutorder()
+{
+simInit();
+}
 
+simoutorder::simoutorder(enum proc_type in_procType)
+:procType(in_procType)
+{
+simInit();
+}
 unsigned int simoutorder::mem_access_latency(int blk_sz)		
 {
   int chunks = (blk_sz + (mem_bus_width - 1)) / mem_bus_width;
@@ -2497,7 +2507,7 @@ simoutorder::simoo_mstate_obj(FILE *stream,
 	    );
   else if (!strcmp(cmd, "stats"))
     {
-      sim_print_stats(stream);
+      sim_print_stats(stream, this);
     }
   else if (!strcmp(cmd, "res"))
     {
@@ -2570,17 +2580,9 @@ simoutorder::sim_main(void)
       ruu_commit();
       ruu_release_fu();
       ruu_writeback();
-      if (!bugcompat_mode)
-	{
-	  lsq_refresh();
-	  ruu_issue();
-	}
+      lsq_refresh();
+      ruu_issue();
       ruu_dispatch();
-      if (bugcompat_mode)
-	{
-	  lsq_refresh();
-	  ruu_issue();
-	}
       if (!ruu_fetch_issue_delay)
 	ruu_fetch();
       else
@@ -2595,4 +2597,32 @@ simoutorder::sim_main(void)
       if (max_insts && sim_num_insn >= max_insts)
 	return;
     }
+}
+
+
+/*PX Mod*/
+
+
+enum md_fault_type
+simoutorder::mem_access_mod(struct mem_t *mem,		/* memory space to access */
+	   enum mem_cmd cmd,		/* Read (from sim mem) or Write */
+	   md_addr_t addr,		/* target address to access */
+	   void *vp,			/* host memory address to access */
+	   int nbytes)			/* number of bytes to access */
+{
+switch(procType)
+{
+ case OCore:
+        panic("pnding");
+        break;
+ case RCore:
+      return  mem_access(mem,
+           cmd,
+           addr,
+           vp,
+           nbytes);
+       break;
+ default:
+      panic("Unknown Processor type in PX's Mod");
+}
 }

@@ -21,8 +21,8 @@
 
 #include "sim-outorder.hpp"
 
-
-
+void
+sim_print_stats(FILE *fd, simoutorder*);
 
 #endif	/* SIM_OUTORDER1_HPP */
 
