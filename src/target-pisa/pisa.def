@@ -227,7 +227,8 @@ DEFINST(JAL,			0x02,
 #define JR_IMPL								\
   {									\
     if (GPR(RS) & 0x7)							\
-      DECLARE_FAULT(md_fault_alignment);				\
+    {panic("\n\n%d reg?", RS);\
+      DECLARE_FAULT(md_fault_alignment);		}		\
 									\
     SET_TPC(GPR(RS));							\
     SET_NPC(GPR(RS));							\

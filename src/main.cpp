@@ -98,7 +98,7 @@ signal_exit_now(int sigtype)
 }
 
 /* execution instruction counter */
-counter_t sim_num_insn = 0;
+
 
 #if 0 /* not portable... :-( */
 /* total simulator (data) memory usage */
@@ -349,8 +349,7 @@ exec_index = -1;
     }
 #endif
 
-  /* default architected value... */
-  sim_num_insn = 0;
+
 
 #ifdef BFD_LOADER
   /* initialize the bfd library */
@@ -366,7 +365,15 @@ exec_index = -1;
   in_simobj->sim_load_prog(argv[exec_index], argc-exec_index, argv+exec_index, envp);
  
   /* register all simulator stats */
-  in_simobj->sim_sdb = stat_new();
+  struct stat_sdb_t *sdb;
+
+  in_simobj->sim_sdb = (struct stat_sdb_t *)calloc(1, sizeof(struct stat_sdb_t));
+  if (!in_simobj->sim_sdb)
+    fatal("out of virtual memory");
+
+  in_simobj->sim_sdb->stats = NULL;
+  in_simobj->sim_sdb->evaluator = eval_new(stat_eval_ident, in_simobj->sim_sdb);
+
   in_simobj->sim_reg_stats(in_simobj->sim_sdb);
   
   return 1;
@@ -377,7 +384,7 @@ main(int argc, char **argv, char **envp)
 {
   char *s;
   int i, exit_code;
-simoutorder sim1(RCORE), sim2(OCORE);
+simoutorder sim1(RCORE), sim2(RCORE);
 #ifndef _MSC_VER
   /* catch SIGUSR1 and dump intermediate stats */
   signal(SIGUSR1, signal_sim_stats);
@@ -416,8 +423,6 @@ simoutorder sim1(RCORE), sim2(OCORE);
   banner(stderr, argc, argv);
 
  
-
-  sim_num_insn = 0;
 
 #ifdef BFD_LOADER
   /* initialize the bfd library */

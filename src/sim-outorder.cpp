@@ -21,7 +21,7 @@
 
 //Static member init
 
- struct mem_t *simoutorder::mem = NULL;
+// struct mem_t *simoutorder::mem = NULL;
  bool simoutorder::isMemInit = false;
  bool simoutorder::isProgLoad = false;
 struct res_desc fu_config[] = {
@@ -872,7 +872,7 @@ simoutorder::sim_init(void)
 {
   sim_num_refs = 0;
   regs_init(&regs);
-  if(!isMemInit)
+  if(1)
   {
    mem = mem_create("mem");
    mem_init(mem);
@@ -884,7 +884,7 @@ simoutorder::sim_load_prog(char *fname,
 	      int argc, char **argv,	
 	      char **envp)		
 {
-if(!isProgLoad)
+if(1)
 {
   ld_load_prog(fname, argc, argv, envp, &regs, mem, TRUE);
 }
@@ -2655,7 +2655,7 @@ memAvailLst* simoutorder::chk_buf_avail(md_addr_t addr)
                    md_addr_t PC)
 {
 
-memAvailLst* list_loc;
+memAvailLst* list_loc = NULL;
 byte_t* ptr = (byte_t*)dp;
 int rdcnt;
 switch(cmd)
@@ -2678,6 +2678,7 @@ switch(cmd)
   {
    *((byte_t *)ptr) = MEM_READ_BYTE(mem, addr);
    ptr += sizeof(byte_t);
+   addr += sizeof(byte_t);
    ++i;
   }
   if(isBufHit)
@@ -2688,7 +2689,11 @@ switch(cmd)
  break;
  }
  case Write:
- {
+ {return  mem_access(mem,
+           cmd,
+           addr,
+           dp,
+           nbytes);
  if(nbytes % 2 != 0)
  {
   panic("data size not bounded");
