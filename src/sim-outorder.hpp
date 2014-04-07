@@ -376,7 +376,7 @@ typedef struct buffer_memory
 #define SYSCALL(INST)							\
   (		\
    (spec_mode ? panic("speculative syscall") : (void) 0),		\
-   sys_syscall(&regs, mem_access, mem, INST, TRUE, this->sim_num_ins))
+   sys_syscall(&regs, mem_access, mem, INST, TRUE))
 
 
 //Typedefs

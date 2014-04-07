@@ -488,7 +488,7 @@ extern char *md_amode_str[md_amode_NUM];
 
 #define MD_MISC_REGS_TO_EXO(REGS)					\
   exo_new(ec_list,							\
-	  /*icnt*/exo_new(ec_integer, (exo_integer_t)(sim_num_insn),	\
+	  /*icnt*/exo_new(ec_integer, (exo_integer_t)sim_num_insn),	\
 	  /*PC*/exo_new(ec_address, (exo_integer_t)(REGS)->regs_PC),	\
 	  /*NPC*/exo_new(ec_address, (exo_integer_t)(REGS)->regs_NPC),	\
 	  /*HI*/exo_new(ec_integer, (exo_integer_t)(REGS)->regs_C.hi),	\
