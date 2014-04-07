@@ -1182,7 +1182,8 @@ dlite_options(int nargs, union arg_val_t args[],/* command arguments */
     return "wrong number of arguments";
 
   /* print all options */
-  opt_print_options(sim_odb, stdout, /* terse */TRUE, /* !notes */FALSE);
+  //PX MOD
+  //opt_print_options(sim_odb, stdout, /* terse */TRUE, /* !notes */FALSE);
 
   /* no error */
   return NULL;
@@ -1200,7 +1201,8 @@ dlite_option(int nargs, union arg_val_t args[],	/* command arguments */
     return "wrong number of arguments";
 
   /* print a single option, specified by argument */
-  opt = opt_find_option(sim_odb, args[0].as_str);
+  //PX MOD
+ // opt = opt_find_option(sim_odb, args[0].as_str);
   if (!opt)
     return "option is not defined";
 
@@ -1225,7 +1227,8 @@ dlite_stats(int nargs, union arg_val_t args[],	/* command arguments */
     return "wrong number of arguments";
 
   /* print all options */
-  stat_print_stats(sim_sdb, stdout);
+  //PX MOD
+  //stat_print_stats(sim_sdb, stdout);
   //sim_aux_stats(stdout);
 
   /* no error */
@@ -1244,12 +1247,14 @@ dlite_stat(int nargs, union arg_val_t args[],	/* command arguments */
     return "wrong number of arguments";
 
   /* print a single option, specified by argument */
-  stat = stat_find_stat(sim_sdb, args[0].as_str);
+  //PX Mod
+ // stat = stat_find_stat(sim_sdb, args[0].as_str);
   if (!stat)
     return "statistical variable is not defined";
 
   /* else, print this option's value */
-  stat_print_stat(sim_sdb, stat, stdout);
+  //PX MOD
+  //stat_print_stat(sim_sdb, stat, stdout);
 
   /* no error */
   return NULL;

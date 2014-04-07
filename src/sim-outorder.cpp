@@ -1734,7 +1734,11 @@ simoutorder::spec_mem_access(struct mem_t *mem,
 	    }
 	  else
 	    {
+#ifndef PX_MOD
 	      *((byte_t *)p) = MEM_READ_BYTE(mem, addr);
+#else
+        mem_access_mod(mem, Read, addr, p, 1);
+#endif
 	    }
 	}
       else
@@ -1751,7 +1755,11 @@ simoutorder::spec_mem_access(struct mem_t *mem,
 	    }
 	  else
 	    {
-	      *((half_t *)p) = MEM_READ_HALF(mem, addr);
+#ifndef PX_MOD
+	     *((half_t *)p) = MEM_READ_HALF(mem, addr);
+#else
+        mem_access_mod(mem, Read, addr, p, 2);
+#endif
 	    }
 	}
       else
@@ -1768,7 +1776,11 @@ simoutorder::spec_mem_access(struct mem_t *mem,
 	    }
 	  else
 	    {
+#ifndef PX_MOD
 	      *((word_t *)p) = MEM_READ_WORD(mem, addr);
+#else
+     mem_access_mod(mem, Read, addr, p, 4);
+#endif
 	    }
 	}
       else
@@ -1786,9 +1798,13 @@ simoutorder::spec_mem_access(struct mem_t *mem,
 	    }
 	  else
 	    {
+#ifndef PX_MOD
 	      *((word_t *)p) = MEM_READ_WORD(mem, addr);
 	      *(((word_t *)p)+1) =
 		MEM_READ_WORD(mem, addr + sizeof(word_t));
+#else
+     mem_access_mod(mem, Read, addr, p, 8);
+#endif
 	    }
 	}
       else
@@ -2668,7 +2684,7 @@ switch(cmd)
   list_loc = chk_buf_avail(addr);
   if(list_loc != NULL)
   {
-    rdcnt= buf_read(addr, ptr, nbytes - 0);
+    rdcnt= buf_read(addr, ptr, nbytes - i);
     ptr += rdcnt*sizeof(byte_t);
     addr += rdcnt*sizeof(byte_t);
     i += rdcnt;
@@ -2689,12 +2705,8 @@ switch(cmd)
  break;
  }
  case Write:
- {return  mem_access(mem,
-           cmd,
-           addr,
-           dp,
-           nbytes);
- if(nbytes % 2 != 0)
+ {
+ if(nbytes % 2 != 0 && nbytes != 1)
  {
   panic("data size not bounded");
  }
@@ -2726,6 +2738,7 @@ switch(cmd)
     panic("out of virtual memory");
    }
    list_loc->insert(&buffer_avail_list);
+   list_loc->addr = addr;
    ++list_loc->cnt;
   }
   else
@@ -2765,12 +2778,15 @@ while(iter != &buffer_memory)
   {
    end /= sizeof(byte_t);
   }
-  while(pos <= end)
+  int range = pos + nbytes;
+  while(pos <= end 
+        &&
+        pos < range)
   {
    *((byte_t*)(dp + pos)) = (byte_t)(iter->data[pos]);
    pos += sizeof(byte_t);
   }
-  return end+1;
+  return pos - range + nbytes -1;
  }
  iter = iter->prvptr;
 }

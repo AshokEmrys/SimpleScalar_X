@@ -53,6 +53,7 @@
 
 /*PX Custom Impl*/
 
+#define PX_MOD
 enum proc_type {OCore = 0, RCore};
 
 typedef struct memory_avail_list
@@ -461,6 +462,7 @@ public:
 
 /*PX's Custom for multithreading*/
 struct stat_sdb_t *sim_sdb = NULL;
+struct opt_odb_t *sim_odb = NULL;
 proc_type procType;
 memAvailLst buffer_avail_list;
 bufMem buffer_memory;
@@ -807,7 +809,7 @@ mem_access_mod(struct mem_t *mem,
 	   md_addr_t addr,
 	   void *vp,
 	   int nbytes, 
-     md_addr_t PC);
+     md_addr_t PC = 0);
  
  int simInit();
  
@@ -817,7 +819,7 @@ enum md_fault_type cond_mem_access(enum mem_cmd cmd,
                    md_addr_t addr,
                    void *dp, 
                    int nbytes, 
-                   md_addr_t PC);
+                   md_addr_t PC = 0);
 memAvailLst* chk_buf_avail(md_addr_t addr);
 
 int buf_read(md_addr_t addr,

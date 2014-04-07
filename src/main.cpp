@@ -79,6 +79,8 @@
 
 
 /*PX Custome impl*/
+struct opt_odb_t *sim_odb;
+struct stat_sdb_t *sim_sdb;
 
 bool isSim1Run = false;
 bool isSim2Run = false;
@@ -123,12 +125,7 @@ jmp_buf sim_exit_buf;
 /* set to non-zero when simulator should dump statistics */
 int sim_dump_stats = FALSE;
 
-/* options database */
-struct opt_odb_t *sim_odb;
-struct opt_odb_t *sim_odb2;
-/* stats database */
-struct stat_sdb_t *sim_sdb;
-struct stat_sdb_t *sim_sdb2;
+
 /* EIO interfaces */
 char *sim_eio_fname = NULL;
 char *sim_chkpt_fname = NULL;
@@ -184,7 +181,7 @@ banner(FILE *fd, int argc, char **argv)
 }
 
 static void
-usage(FILE *fd, int argc, char **argv)
+usage(FILE *fd, int argc, char **argv, struct opt_odb_t* sim_odb)
 {
   fprintf(fd, "Usage: %s {-options} executable {arguments}\n", argv[0]);
   opt_print_help(sim_odb, fd);
@@ -238,50 +235,49 @@ exit_now(int exit_code, simoutorder *simobj)
   /* all done! */
   //exit(exit_code);
 }
-int init(struct opt_odb_t* &in_optdb,
-         simoutorder* in_simobj,
+int init(simoutorder* in_simobj,
          int argc,
          char** argv,
          char **envp
          )
 {
-in_optdb = opt_new(orphan_fn);
-opt_reg_flag(in_optdb, "-h", "print help message",
+in_simobj->sim_odb = opt_new(orphan_fn);
+opt_reg_flag(in_simobj->sim_odb, "-h", "print help message",
 	       &help_me, /* default */FALSE, /* !print */FALSE, NULL);
-  opt_reg_flag(in_optdb, "-v", "verbose operation",
+  opt_reg_flag(in_simobj->sim_odb, "-v", "verbose operation",
 	       &verbose, /* default */FALSE, /* !print */FALSE, NULL);
 #ifdef DEBUG
-  opt_reg_flag(in_optdb, "-d", "enable debug message",
+  opt_reg_flag(in_simobj->sim_odb, "-d", "enable debug message",
 	       &debugging, /* default */FALSE, /* !print */FALSE, NULL);
 #endif /* DEBUG */
-  opt_reg_flag(in_optdb, "-i", "start in Dlite debugger",
+  opt_reg_flag(in_simobj->sim_odb, "-i", "start in Dlite debugger",
 	       &dlite_active, /* default */FALSE, /* !print */FALSE, NULL);
-  opt_reg_int(in_optdb, "-seed",
+  opt_reg_int(in_simobj->sim_odb, "-seed",
 	      "random number generator seed (0 for timer seed)",
 	      &rand_seed, /* default */1, /* print */TRUE, NULL);
-  opt_reg_flag(in_optdb, "-q", "initialize and terminate immediately",
+  opt_reg_flag(in_simobj->sim_odb, "-q", "initialize and terminate immediately",
 	       &init_quit, /* default */FALSE, /* !print */FALSE, NULL);
-  opt_reg_string(in_optdb, "-chkpt", "restore EIO trace execution from <fname>",
+  opt_reg_string(in_simobj->sim_odb, "-chkpt", "restore EIO trace execution from <fname>",
 		 &sim_chkpt_fname, /* default */NULL, /* !print */FALSE, NULL);
 
   /* stdio redirection options */
-  opt_reg_string(in_optdb, "-redir:sim",
+  opt_reg_string(in_simobj->sim_odb, "-redir:sim",
 		 "redirect simulator output to file (non-interactive only)",
 		 &sim_simout,
 		 /* default */NULL, /* !print */FALSE, NULL);
-  opt_reg_string(in_optdb, "-redir:prog",
+  opt_reg_string(in_simobj->sim_odb, "-redir:prog",
 		 "redirect simulated program output to file",
 		 &sim_progout, /* default */NULL, /* !print */FALSE, NULL);
   #ifndef _MSC_VER
   /* scheduling priority option */
-  opt_reg_int(in_optdb, "-nice",
+  opt_reg_int(in_simobj->sim_odb, "-nice",
 	      "simulator scheduling priority", &nice_priority,
 	      /* default */NICE_DEFAULT_VALUE, /* print */TRUE, NULL);
 #endif
-in_simobj->sim_reg_options(in_optdb);
+in_simobj->sim_reg_options(in_simobj->sim_odb);
 
 exec_index = -1;
-  opt_process_options(in_optdb, argc, argv);
+  opt_process_options(in_simobj->sim_odb, argc, argv);
 
   /* redirect I/O? */
   if (sim_simout != NULL)
@@ -304,14 +300,14 @@ exec_index = -1;
   if (argc < 2)
     {
       banner(stderr, argc, argv);
-      usage(stderr, argc, argv);
+      usage(stderr, argc, argv, in_simobj->sim_odb);
       exit(1);
     }
   
   if (help_me)
     {
       /* print help message and exit */
-      usage(stderr, argc, argv);
+      usage(stderr, argc, argv, in_simobj->sim_odb);
       exit(1);
     }
 
@@ -332,13 +328,13 @@ exec_index = -1;
     {
       /* executable was not found */
       fprintf(stderr, "error: no executable specified\n");
-      usage(stderr, argc, argv);
+      usage(stderr, argc, argv, in_simobj->sim_odb);
       exit(1);
     }
   /* else, exec_index points to simulated program arguments */
 
   /* check simulator-specific options */
-  in_simobj->sim_check_options(in_optdb, argc, argv);
+  in_simobj->sim_check_options(in_simobj->sim_odb, argc, argv);
 
 #ifndef _MSC_VER
   /* set simulator scheduling priority */
@@ -385,7 +381,7 @@ main(int argc, char **argv, char **envp)
 {
   char *s;
   int i, exit_code;
-simoutorder sim1(RCORE), sim2(RCORE);
+simoutorder sim1(OCORE), sim2(RCORE);
 #ifndef _MSC_VER
   /* catch SIGUSR1 and dump intermediate stats */
   signal(SIGUSR1, signal_sim_stats);
@@ -435,14 +431,12 @@ simoutorder sim1(RCORE), sim2(RCORE);
   /* initialize the instruction decoder */
   md_init_decoder();
 
-  init(  sim_odb,
-         &sim1,
+  init(  &sim1,
          argc,
          argv,
          envp
          );
- init(  sim_odb2,
-         &sim2,
+ init(   &sim2,
          argc,
          argv,
          envp
@@ -461,7 +455,7 @@ simoutorder sim1(RCORE), sim2(RCORE);
   if (s[strlen(s)-1] == '\n')
     s[strlen(s)-1] = '\0';
   fprintf(stderr, "\nsim: simulation started @ %s, options follow:\n", s);
-  opt_print_options(sim_odb, stderr, /* short */TRUE, /* notes */TRUE);
+  opt_print_options(sim1.sim_odb, stderr, /* short */TRUE, /* notes */TRUE);
   sim1.sim_aux_config(stderr);
   fprintf(stderr, "\n");
 
