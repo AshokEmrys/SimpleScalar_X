@@ -74,7 +74,8 @@ extern jmp_buf sim_exit_buf;
 extern int sim_swap_bytes;
 extern int sim_swap_words;
 
-
+/* execution instruction counter */
+extern counter_t sim_num_insn;
 
 /* execution start/end times */
 extern time_t sim_start_time;

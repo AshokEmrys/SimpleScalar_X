@@ -98,7 +98,7 @@ signal_exit_now(int sigtype)
 }
 
 /* execution instruction counter */
-
+counter_t sim_num_insn = 0;
 
 #if 0 /* not portable... :-( */
 /* total simulator (data) memory usage */
@@ -349,7 +349,8 @@ exec_index = -1;
     }
 #endif
 
-
+  /* default architected value... */
+  sim_num_insn = 0;
 
 #ifdef BFD_LOADER
   /* initialize the bfd library */
@@ -423,6 +424,8 @@ simoutorder sim1(RCORE), sim2(RCORE);
   banner(stderr, argc, argv);
 
  
+
+  sim_num_insn = 0;
 
 #ifdef BFD_LOADER
   /* initialize the bfd library */
